@@ -146,6 +146,20 @@
   .foot{text-align:center;color:var(--soft);font-size:13px;margin-top:20px}
   .hidden{display:none!important}
 
+  .daynav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .daynav button{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:22px;cursor:pointer}
+  .daynav button:disabled{opacity:.3;cursor:default}
+  .daynav div{text-align:center;flex:1}
+  .daynav b{display:block;font-size:16px}
+  .daynav span{font-size:13px;color:var(--rose);font-weight:700}
+  #toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);
+    padding:9px 18px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:60}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .ntop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+  .ntop .del{border:0;background:none;color:var(--soft);font:inherit;font-size:13px;cursor:pointer}
+  .ntop .del.armed{color:#fff;background:#d9534f;border-radius:999px;padding:2px 10px}
+  .ntxt{white-space:pre-wrap}
+
   /* breathing overlay */
   #breathe{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
   .orb{width:220px;height:220px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff6,transparent 60%),linear-gradient(135deg,var(--rose),var(--lav));
@@ -188,6 +202,11 @@
 
   <!-- ================= TODAY ================= -->
   <section id="today">
+    <div class="daynav">
+      <button id="prevDay" aria-label="Previous day">‹</button>
+      <div><b id="viewLabel"></b><span id="pastHint" class="hidden" data-i="pastHint"></span></div>
+      <button id="nextDay" aria-label="Next day">›</button>
+    </div>
     <div class="card love">
       <div class="label" data-i="loveLabel"></div>
       <div class="serif" id="love"></div>
@@ -323,10 +342,35 @@
   </section>
 
   <!-- ================= JOURNAL ================= -->
-  <section id="journal" class="hidden"><div id="entries"></div></section>
+  <section id="journal" class="hidden">
+    <div class="card">
+      <h2 data-i="noteTitle"></h2>
+      <p class="hint" data-i="noteHint"></p>
+      <input id="nTitle" data-ph="noteTitlePh" maxlength="80" style="margin-bottom:10px">
+      <div class="toggle">
+        <button class="on" data-nmode="text" data-i="write"></button>
+        <button data-nmode="voice" data-i="voice"></button>
+      </div>
+      <div id="nTextMode"><textarea id="nText" data-ph="notePh"></textarea></div>
+      <div id="nVoiceMode" class="hidden">
+        <div class="rec" id="nRecWrap">
+          <button class="recbtn" id="nRecBtn" aria-label="Record">🎙️</button>
+          <div class="status" id="nRecStatus"></div>
+        </div>
+        <div id="nPlayback" class="hidden">
+          <audio id="nAudio" controls></audio>
+          <div style="text-align:center;margin-top:6px"><button class="link" id="nDelAudio" data-i="delRec"></button></div>
+        </div>
+      </div>
+      <button class="btn" id="nSave" style="margin-top:12px" data-i="noteSave"></button>
+    </div>
+    <div id="entries"></div>
+  </section>
 
   <div class="foot" data-i="foot"></div>
 </div>
+
+<div id="toast"></div>
 
 <!-- breathing overlay -->
 <div id="breathe" class="hidden">
@@ -356,6 +400,9 @@ en:{
   today:"Today", tasks:"Tasks", progress:"Progress", journal:"Journal",
   welcomeTitle:"Welcome to your little daily space 🌸", welcomeBody:"Tick off your routine, keep track of your tasks, and check in with yourself. Everything stays only on this phone.",
   namePh:"What should I call you?", start:"Start",
+  dateToday:"Today", pastHint:"You're filling in a past day 🗓️", saved:"Saved ✓",
+  noteTitle:"Write anything ✍️", noteHint:"Thoughts, feelings, plans, a prayer, a dream… anything at all.", noteTitlePh:"Title (optional)",
+  notePh:"What's on your heart…", noteSave:"Save note", deleteQ:"Delete?", del:"Delete", checkinTag:"🌷 Check-in", noteTag:"📝 Note",
   morning:"Good morning", afternoon:"Good afternoon", evening:"Good evening",
   sRoutine:"routine", sWater:"glasses", sTasks:"tasks today",
   loveLabel:"For you today 💕", noteFrom:"💌 A note from",
@@ -369,7 +416,7 @@ en:{
   tapRec:"Tap to start recording", recording:"Recording…", tapStop:"tap to stop", delRec:"Delete and record again",
   noMic:"I couldn't reach the microphone. Please allow mic access, or write instead.",
   noVoice:"Voice notes don't work in this browser. Try Chrome or Safari, or write instead.",
-  save:"Save my check-in", thanks:"Thank you for showing up for yourself.", edit:"Edit today's check-in",
+  save:"Save my check-in", thanks:"Thank you for showing up for yourself.", edit:"Edit check-in",
   todayTasks:"Today's tasks", weekTasks:"This week", addDaily:"Add a task for today…", addWeekly:"Add a task for this week…",
   noTasks:"Nothing yet. Add something small 🌱", rollNote:"Unfinished tasks move forward to the next day or week by themselves.",
   thisWeek:"this week", streak:"day streak", avgMood:"avg mood", perDay:"glasses / day", last7:"Last 7 days",
@@ -390,10 +437,13 @@ en:{
 am:{
   today:"ዛሬ", tasks:"ስራዎች", progress:"እድገት", journal:"ማስታወሻ",
   welcomeTitle:"ወደ ትንሿ የዕለት ቦታሽ እንኳን ደህና መጣሽ 🌸", welcomeBody:"የዕለት ልማዶችሽን ምልክት አድርጊ፣ ስራዎችሽን ተከታተዪ፣ ስለራስሽም አስቢ። ሁሉም ነገር በዚህ ስልክ ላይ ብቻ ይቀመጣል።",
-  namePh:"ምን ልበልሽ?", start:"ጀምሪ",
+  namePh:"ማን ብዬ ልጥራሽ?", start:"ጀምሪ",
+  dateToday:"ዛሬ", pastHint:"ያለፈ ቀን እየሞላሽ ነው 🗓️", saved:"ተቀምጧል ✓",
+  noteTitle:"የፈለግሽውን ጻፊ ✍️", noteHint:"ሀሳብ፣ ስሜት፣ እቅድ፣ ጸሎት፣ ህልም… ማንኛውንም ነገር።", noteTitlePh:"ርዕስ (ካስፈለገ)",
+  notePh:"ልብሽ ውስጥ ያለውን ጻፊ…", noteSave:"አስቀምጪ", deleteQ:"ይሰረዝ?", del:"ሰርዝ", checkinTag:"🌷 የዕለት ቆይታ", noteTag:"📝 ማስታወሻ",
   morning:"እንደምን አደርሽ", afternoon:"እንደምን ዋልሽ", evening:"እንደምን አመሸሽ",
   sRoutine:"ልማድ", sWater:"ብርጭቆ", sTasks:"የዛሬ ስራዎች",
-  loveLabel:"ለአንቺ ዛሬ 💕", noteFrom:"💌 መልዕክት ከ",
+  loveLabel:"የእለቱ መልዕክት 💕", noteFrom:"💌 መልዕክት ከ",
   routineTitle:"የዕለት ልማድ", waterTitle:"ውሃ 💧", goal:"የቀን ግብ", glasses:"ብርጭቆ",
   challengeLabel:"የዛሬ ራስን የመውደድ ፈተና 💝", challengeBtn:"አደረግሁት!", challengeDid:"ተጠናቀቀ 💕",
   tipLabel:"የስሜት ምክር 🌿", calmBtn:"መረጋጋት እፈልጋለሁ 🫧",
@@ -404,7 +454,7 @@ am:{
   tapRec:"ለመቅዳት ተጫኚ", recording:"እየተቀዳ ነው…", tapStop:"ለማቆም ተጫኚ", delRec:"ሰርዘሽ እንደገና ቅጂ",
   noMic:"ማይክሮፎኑን ማግኘት አልቻልኩም። እባክሽ ፍቀጂ፣ ወይም በጽሁፍ ጻፊ።",
   noVoice:"በዚህ ብራውዘር የድምፅ መልዕክት አይሰራም። Chrome ወይም Safari ሞክሪ፣ ወይም ጻፊ።",
-  save:"አስቀምጪ", thanks:"ለራስሽ ጊዜ ስለሰጠሽ አመሰግናለሁ።", edit:"የዛሬውን አስተካክዪ",
+  save:"አስቀምጪ", thanks:"ለራስሽ ጊዜ ስለሰጠሽ አመሰግናለሁ።", edit:"አስተካክዪ",
   todayTasks:"የዛሬ ስራዎች", weekTasks:"የዚህ ሳምንት", addDaily:"ለዛሬ ስራ ጨምሪ…", addWeekly:"ለዚህ ሳምንት ስራ ጨምሪ…",
   noTasks:"ገና ምንም የለም። ትንሽ ነገር ጨምሪ 🌱", rollNote:"ያልተጠናቀቁ ስራዎች በራሳቸው ወደሚቀጥለው ቀን ወይም ሳምንት ይሸጋገራሉ።",
   thisWeek:"በዚህ ሳምንት", streak:"ተከታታይ ቀናት", avgMood:"አማካይ ስሜት", perDay:"ብርጭቆ / በቀን", last7:"ያለፉት 7 ቀናት",
@@ -511,22 +561,30 @@ const LOC = () => lang==="am" ? "am-ET" : undefined;
 const pad = n => String(n).padStart(2,"0");
 const keyOf = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const fromKey = k => { const [y,m,d] = k.split("-").map(Number); return new Date(y,m-1,d); };
+const numOf = k => { const d = fromKey(k); return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5); };
 const now = new Date();
 const TODAY = keyOf(now);
-const dayNum = Math.floor(Date.UTC(now.getFullYear(),now.getMonth(),now.getDate())/864e5);
 const WEEK = (()=>{ const d = new Date(now); d.setDate(d.getDate()-((d.getDay()+6)%7)); return keyOf(d); })();
 const lastDays = n => Array.from({length:n},(_,i)=>{ const d = new Date(now); d.setDate(d.getDate()-(n-1-i)); return keyOf(d); });
-const pick = (arr, salt=0) => arr[(dayNum + salt) % arr.length];
-const TODAY_QS = [0,1,2].map(i=>QUESTIONS[(dayNum*3 + i) % QUESTIONS.length]);
+const MAX_BACK = 30;
+let VIEW = TODAY;                      // the day being filled in on the Today tab
+const vNum = () => numOf(VIEW);
+const pick = (arr, salt=0) => arr[(vNum() + salt) % arr.length];
+const viewQs = () => [0,1,2].map(i=>QUESTIONS[(vNum()*3 + i) % QUESTIONS.length]);
 
 /* ================= storage ================= */
-const S = {days:{}, tasks:[]};
+const S = {days:{}, tasks:[], notes:[]};
 let db = null;
 function openDB(){
   return new Promise(res=>{
     try{
-      const r = indexedDB.open("my-day",1);
-      r.onupgradeneeded = () => { r.result.createObjectStore("days",{keyPath:"date"}); r.result.createObjectStore("tasks",{keyPath:"id"}); };
+      const r = indexedDB.open("my-day",2);
+      r.onupgradeneeded = () => {
+        const x = r.result;
+        if(!x.objectStoreNames.contains("days")) x.createObjectStore("days",{keyPath:"date"});
+        if(!x.objectStoreNames.contains("tasks")) x.createObjectStore("tasks",{keyPath:"id"});
+        if(!x.objectStoreNames.contains("notes")) x.createObjectStore("notes",{keyPath:"id"});
+      };
       r.onsuccess = () => res(r.result); r.onerror = () => res(null);
     }catch(e){ res(null); }
   });
@@ -536,10 +594,15 @@ const getAll = store => new Promise(res=>{
 });
 function put(store,obj){ if(!db) return; try{ db.transaction(store,"readwrite").objectStore(store).put(obj); }catch(e){} }
 function del(store,key){ if(!db) return; try{ db.transaction(store,"readwrite").objectStore(store).delete(key); }catch(e){} }
-function day(k=TODAY){ if(!S.days[k]) S.days[k] = {date:k, routine:{}, water:0}; if(!S.days[k].routine) S.days[k].routine = {}; return S.days[k]; }
-function saveDay(d){ S.days[d.date] = d; put("days",d); }
+function day(k=VIEW){ if(!S.days[k]) S.days[k] = {date:k, routine:{}, water:0}; if(!S.days[k].routine) S.days[k].routine = {}; return S.days[k]; }
+function saveDay(d, quiet){ S.days[d.date] = d; put("days",d); if(!quiet) toast(); }
 let waterGoal = Number(lsGet("water-goal")) || 8;
 const esc = s => { const x = document.createElement("div"); x.textContent = s; return x.innerHTML; };
+let toastT;
+function toast(msg){
+  const el = document.getElementById("toast"); el.textContent = msg || t("saved"); el.classList.add("show");
+  clearTimeout(toastT); toastT = setTimeout(()=>el.classList.remove("show"), 1300);
+}
 
 /* ================= theme ================= */
 function applyTheme(th){
@@ -551,6 +614,58 @@ let theme = lsGet("theme") || ((window.matchMedia && matchMedia("(prefers-color-
 applyTheme(theme);
 document.getElementById("themeBtn").onclick = () => { theme = theme==="dark" ? "light" : "dark"; lsSet("theme",theme); applyTheme(theme); };
 
+/* ================= voice recorder (reused by check-in and notes) ================= */
+const canRecord = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+function pickType(){ for(const ty of ["audio/webm;codecs=opus","audio/webm","audio/mp4","audio/aac"]){ try{ if(MediaRecorder.isTypeSupported(ty)) return ty; }catch(e){} } return ""; }
+const fmt = s => `${Math.floor(s/60)}:${pad(s%60)}`;
+function makeRecorder(p){
+  const $ = id => document.getElementById(p+id);
+  const btn = $("RecBtn") || $("recBtn"), status = $("RecStatus") || $("recStatus");
+  const R = {blob:null, rec:null};
+  let chunks = [], timer = null, secs = 0, stream = null;
+  if(!canRecord){ btn.disabled = true; btn.style.opacity = .4; }
+  R.idleText = () => { if(!R.rec || R.rec.state!=="recording") status.textContent = canRecord ? t("tapRec") : t("noVoice"); };
+  R.show = blob => {
+    R.blob = blob;
+    if(blob) ($("Audio")||$("audio")).src = URL.createObjectURL(blob);
+    ($("Playback")||$("playback")).classList.toggle("hidden", !blob);
+    ($("RecWrap")||$("recWrap")).classList.toggle("hidden", !!blob);
+  };
+  async function start(){
+    try{ stream = await navigator.mediaDevices.getUserMedia({audio:true}); }
+    catch(e){ status.textContent = t("noMic"); return; }
+    const ty = pickType();
+    R.rec = ty ? new MediaRecorder(stream,{mimeType:ty}) : new MediaRecorder(stream);
+    chunks = [];
+    R.rec.ondataavailable = e => { if(e.data.size) chunks.push(e.data); };
+    R.rec.onstop = () => {
+      stream.getTracks().forEach(x=>x.stop()); clearInterval(timer);
+      btn.classList.remove("live"); btn.textContent = "🎙️"; status.textContent = t("tapRec");
+      R.show(new Blob(chunks,{type:R.rec.mimeType || ty || "audio/webm"}));
+    };
+    R.rec.start(); secs = 0;
+    btn.classList.add("live"); btn.textContent = "■";
+    status.textContent = `${t("recording")} 0:00 · ${t("tapStop")}`;
+    timer = setInterval(()=>{ secs++; status.textContent = `${t("recording")} ${fmt(secs)} · ${t("tapStop")}`; if(secs>=180) R.rec.stop(); },1000);
+  }
+  btn.onclick = () => { if(R.rec && R.rec.state==="recording") R.rec.stop(); else start(); };
+  ($("DelAudio")||$("delAudio")).onclick = () => R.show(null);
+  return R;
+}
+const ciRec = makeRecorder("");
+const nRec = makeRecorder("n");
+function modeSwitch(attr, textId, voiceId){
+  const set = m => {
+    document.querySelectorAll(`[${attr}]`).forEach(b=>b.classList.toggle("on", b.getAttribute(attr)===m));
+    document.getElementById(textId).classList.toggle("hidden", m!=="text");
+    document.getElementById(voiceId).classList.toggle("hidden", m!=="voice");
+  };
+  document.querySelectorAll(`[${attr}]`).forEach(b=>b.onclick = () => set(b.getAttribute(attr)));
+  return set;
+}
+const setMode = modeSwitch("data-mode","textMode","voiceMode");
+const setNMode = modeSwitch("data-nmode","nTextMode","nVoiceMode");
+
 /* ================= language ================= */
 function applyLang(){
   document.documentElement.lang = lang;
@@ -559,15 +674,10 @@ function applyLang(){
   document.querySelectorAll("[data-ph]").forEach(el=>el.placeholder = t(el.dataset.ph));
   document.getElementById("date").textContent = now.toLocaleDateString(LOC(),{weekday:"long",day:"numeric",month:"long"});
   setGreeting();
-  document.getElementById("love").textContent = pick(LOVE)[L()];
-  document.getElementById("challenge").textContent = pick(CHALLENGES,3)[L()];
-  const tip = pick(TIPS,5)[L()];
-  document.getElementById("tipTitle").textContent = tip[0];
-  document.getElementById("tipBody").textContent = tip[1];
   document.getElementById("noteFrom").textContent = `${t("noteFrom")} ${FROM}`;
-  if(!recorder || recorder.state!=="recording") recStatus.textContent = canRecord ? t("tapRec") : t("noVoice");
-  renderQuestions(); renderRoutine(); renderWater(); renderChallenge(); renderTasks(); renderSummary();
-  const d = S.days[TODAY]; if(d && d.checkin) document.getElementById("doneMsg").textContent = encouragement(d);
+  ciRec.idleText(); nRec.idleText();
+  renderView();
+  renderTasks();
   if(!document.getElementById("progress").classList.contains("hidden")) renderProgress();
   if(!document.getElementById("journal").classList.contains("hidden")) renderJournal();
 }
@@ -582,11 +692,34 @@ function setGreeting(){
 }
 document.getElementById("nameBtn").onclick = () => { lsSet("ci-name", document.getElementById("nameIn").value.trim() || " "); setGreeting(); };
 
-/* note from friend: every 3rd day */
-if(MY_NOTES.length && dayNum % 3 === 0){
-  document.getElementById("noteText").textContent = MY_NOTES[Math.floor(dayNum/3) % MY_NOTES.length];
-  document.getElementById("noteCard").classList.remove("hidden");
+/* ================= day switcher (fill in missed days) ================= */
+function renderView(){
+  const isToday = VIEW===TODAY;
+  document.getElementById("viewLabel").textContent = isToday ? t("dateToday")
+    : fromKey(VIEW).toLocaleDateString(LOC(),{weekday:"long",day:"numeric",month:"short"});
+  document.getElementById("pastHint").classList.toggle("hidden", isToday);
+  document.getElementById("nextDay").disabled = isToday;
+  document.getElementById("prevDay").disabled = (numOf(TODAY)-vNum()) >= MAX_BACK;
+  document.getElementById("love").textContent = pick(LOVE)[L()];
+  document.getElementById("challenge").textContent = pick(CHALLENGES,3)[L()];
+  const tip = pick(TIPS,5)[L()];
+  document.getElementById("tipTitle").textContent = tip[0];
+  document.getElementById("tipBody").textContent = tip[1];
+  const showNote = MY_NOTES.length && vNum() % 3 === 0;
+  document.getElementById("noteCard").classList.toggle("hidden", !showNote);
+  if(showNote) document.getElementById("noteText").textContent = MY_NOTES[Math.floor(vNum()/3) % MY_NOTES.length];
+  renderQuestions(); renderRoutine(); renderWater(); renderChallenge(); renderSummary();
+  const d = S.days[VIEW];
+  if(d && d.checkin) document.getElementById("doneMsg").textContent = encouragement(d);
 }
+function setView(k){
+  VIEW = k; resetForm();
+  const d = S.days[VIEW]; if(d && d.checkin) loadCheckin(d);
+  renderView(); window.scrollTo({top:0});
+}
+function shift(n){ const d = fromKey(VIEW); d.setDate(d.getDate()+n); const k = keyOf(d); if(k<=TODAY) setView(k); }
+document.getElementById("prevDay").onclick = () => shift(-1);
+document.getElementById("nextDay").onclick = () => shift(1);
 
 /* ================= tabs ================= */
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick = () => {
@@ -632,15 +765,15 @@ function renderSummary(){
   document.getElementById("sRoutine").textContent = `${done}/${ALL_ITEMS.length}`;
   document.getElementById("routinePct").textContent = Math.round(done/ALL_ITEMS.length*100)+"%";
   document.getElementById("sWater").textContent = `${day().water||0}/${waterGoal}`;
-  const tk = S.tasks.filter(x=>x.kind==="daily" && x.period===TODAY);
+  const tk = S.tasks.filter(x=>x.kind==="daily" && x.period===VIEW);
   document.getElementById("sTasks").textContent = `${tk.filter(x=>x.done).length}/${tk.length}`;
 }
 
 /* ================= check-in ================= */
-const ci = {mood:null, answers:{}, audio:null};
+let ci = {mood:null, answers:{}};
 function renderQuestions(){
   const box = document.getElementById("dailyQs"); box.innerHTML = "";
-  TODAY_QS.forEach(q=>{
+  viewQs().forEach(q=>{
     const [text, opts] = q[lang];
     const b = document.createElement("div"); b.className = "block";
     b.innerHTML = `<div class="q">${esc(text)}</div><div class="chips">${opts.map((o,i)=>
@@ -658,46 +791,6 @@ document.getElementById("moods").addEventListener("click", e=>{
   document.querySelectorAll("#moods button").forEach(x=>x.classList.toggle("on", x===b));
   document.getElementById("save").disabled = false;
 });
-function setMode(m){
-  document.querySelectorAll("[data-mode]").forEach(b=>b.classList.toggle("on", b.dataset.mode===m));
-  document.getElementById("textMode").classList.toggle("hidden", m!=="text");
-  document.getElementById("voiceMode").classList.toggle("hidden", m!=="voice");
-}
-document.querySelectorAll("[data-mode]").forEach(b=>b.onclick = () => setMode(b.dataset.mode));
-
-/* voice */
-const recBtn = document.getElementById("recBtn"), recStatus = document.getElementById("recStatus");
-let recorder = null, chunks = [], timer = null, secs = 0, stream = null;
-const canRecord = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
-if(!canRecord){ recBtn.disabled = true; recBtn.style.opacity = .4; }
-function pickType(){ for(const ty of ["audio/webm;codecs=opus","audio/webm","audio/mp4","audio/aac"]){ try{ if(MediaRecorder.isTypeSupported(ty)) return ty; }catch(e){} } return ""; }
-const fmt = s => `${Math.floor(s/60)}:${pad(s%60)}`;
-function showAudio(blob){
-  ci.audio = blob;
-  if(blob) document.getElementById("audio").src = URL.createObjectURL(blob);
-  document.getElementById("playback").classList.toggle("hidden", !blob);
-  document.getElementById("recWrap").classList.toggle("hidden", !!blob);
-}
-async function startRec(){
-  try{ stream = await navigator.mediaDevices.getUserMedia({audio:true}); }
-  catch(e){ recStatus.textContent = t("noMic"); return; }
-  const ty = pickType();
-  recorder = ty ? new MediaRecorder(stream,{mimeType:ty}) : new MediaRecorder(stream);
-  chunks = [];
-  recorder.ondataavailable = e => { if(e.data.size) chunks.push(e.data); };
-  recorder.onstop = () => {
-    stream.getTracks().forEach(x=>x.stop()); clearInterval(timer);
-    recBtn.classList.remove("live"); recBtn.textContent = "🎙️"; recStatus.textContent = t("tapRec");
-    showAudio(new Blob(chunks,{type:recorder.mimeType || ty || "audio/webm"}));
-  };
-  recorder.start(); secs = 0;
-  recBtn.classList.add("live"); recBtn.textContent = "■";
-  recStatus.textContent = `${t("recording")} 0:00 · ${t("tapStop")}`;
-  timer = setInterval(()=>{ secs++; recStatus.textContent = `${t("recording")} ${fmt(secs)} · ${t("tapStop")}`; if(secs>=180) recorder.stop(); },1000);
-}
-recBtn.onclick = () => { if(recorder && recorder.state==="recording") recorder.stop(); else startRec(); };
-document.getElementById("delAudio").onclick = () => showAudio(null);
-
 function encouragement(d){
   const a = d.answers || {};
   if(a.carry===2 || a.sleep===2 || a.calm===2) return t("encHeavy");
@@ -707,9 +800,9 @@ function encouragement(d){
 }
 document.getElementById("save").onclick = () => {
   const d = day();
-  Object.assign(d, {mood:ci.mood, answers:{...(d.answers||{}), ...ci.answers}, qids:TODAY_QS.map(q=>q.id),
+  Object.assign(d, {mood:ci.mood, answers:{...ci.answers}, qids:viewQs().map(q=>q.id),
     good:["g1","g2","g3"].map(id=>document.getElementById(id).value.trim()).filter(Boolean),
-    text:document.getElementById("text").value.trim(), audio:ci.audio||null, checkin:true});
+    text:document.getElementById("text").value.trim(), audio:ciRec.blob||null, checkin:true});
   saveDay(d); showDone(d);
 };
 function showDone(d){
@@ -721,15 +814,34 @@ document.getElementById("edit").onclick = () => {
   document.getElementById("done").classList.add("hidden");
   document.getElementById("form").classList.remove("hidden");
 };
+function resetForm(){
+  ci = {mood:null, answers:{}};
+  document.querySelectorAll("#moods button").forEach(x=>x.classList.remove("on"));
+  ["g1","g2","g3","text"].forEach(id=>document.getElementById(id).value = "");
+  ciRec.show(null); setMode("text");
+  document.getElementById("save").disabled = true;
+  document.getElementById("done").classList.add("hidden");
+  document.getElementById("form").classList.remove("hidden");
+}
 function loadCheckin(d){
-  ci.mood = d.mood; ci.answers = {...(d.answers||{})};
+  ci = {mood:d.mood, answers:{...(d.answers||{})}};
   document.querySelectorAll("#moods button").forEach(x=>x.classList.toggle("on", x.dataset.v==String(d.mood)));
   (d.good||[]).forEach((g,i)=>document.getElementById("g"+(i+1)).value = g);
   document.getElementById("text").value = d.text || "";
-  if(d.audio){ showAudio(d.audio); setMode("voice"); }
+  if(d.audio){ ciRec.show(d.audio); setMode("voice"); }
   document.getElementById("save").disabled = !ci.mood;
-  renderQuestions(); showDone(d);
+  showDone(d);
 }
+
+/* ================= free notes ================= */
+document.getElementById("nSave").onclick = () => {
+  const title = document.getElementById("nTitle").value.trim(), text = document.getElementById("nText").value.trim();
+  if(!title && !text && !nRec.blob) return;
+  const n = {id:Date.now()+"-"+Math.random().toString(36).slice(2,6), date:TODAY, created:Date.now(), title, text, audio:nRec.blob||null};
+  S.notes.push(n); put("notes",n);
+  document.getElementById("nTitle").value = ""; document.getElementById("nText").value = ""; nRec.show(null); setNMode("text");
+  toast(); renderJournal();
+};
 
 /* ================= breathing ================= */
 const orb = document.getElementById("orb"), bText = document.getElementById("bText");
@@ -763,7 +875,7 @@ function renderTasks(){
       row.innerHTML = `<span class="box">${tk.done?"✓":""}</span><span class="lbl">${esc(tk.title)}</span><button class="del" aria-label="Delete">✕</button>`;
       row.onclick = e => {
         if(e.target.classList.contains("del")){ S.tasks = S.tasks.filter(x=>x.id!==tk.id); del("tasks",tk.id); }
-        else { tk.done = !tk.done; tk.doneDate = tk.done ? TODAY : null; put("tasks",tk); }
+        else { tk.done = !tk.done; tk.doneDate = tk.done ? TODAY : null; put("tasks",tk); toast(); }
         renderTasks(); renderSummary();
       };
       box.appendChild(row);
@@ -776,7 +888,7 @@ document.querySelectorAll("form.addrow").forEach(f=>f.onsubmit = e => {
   const inp = f.querySelector("input"), title = inp.value.trim(); if(!title) return;
   const kind = f.dataset.kind;
   const tk = {id:Date.now()+"-"+Math.random().toString(36).slice(2,6), title, kind, period:kind==="daily"?TODAY:WEEK, done:false, doneDate:null, created:Date.now()};
-  S.tasks.push(tk); put("tasks",tk); inp.value = ""; renderTasks(); renderSummary();
+  S.tasks.push(tk); put("tasks",tk); inp.value = ""; renderTasks(); renderSummary(); toast();
 });
 function rollTasks(){
   S.tasks.forEach(tk=>{
@@ -847,33 +959,55 @@ function renderProgress(){
 /* ================= journal ================= */
 function renderJournal(){
   const box = document.getElementById("entries"); box.innerHTML = "";
-  const list = Object.values(S.days).filter(d=>d.checkin).sort((a,b)=>b.date.localeCompare(a.date));
-  if(!list.length){ box.innerHTML = `<div class="card empty">${t("journalEmpty")}</div>`; return; }
-  list.forEach(e=>{
+  const items = [
+    ...Object.values(S.days).filter(d=>d.checkin).map(d=>({kind:"c", date:d.date, sort:d.date+"~", d})),
+    ...S.notes.map(n=>({kind:"n", date:n.date, sort:n.date+" "+String(n.created).padStart(15,"0"), n}))
+  ].sort((a,b)=>b.sort.localeCompare(a.sort));
+  if(!items.length){ box.innerHTML = `<div class="card empty">${t("journalEmpty")}</div>`; return; }
+  const dfmt = k => fromKey(k).toLocaleDateString(LOC(),{weekday:"short",day:"numeric",month:"short"});
+  items.forEach(it=>{
     const c = document.createElement("div"); c.className = "card entry";
-    const qa = Object.entries(e.answers||{}).map(([id,i])=>{
-      const q = QUESTIONS.find(x=>x.id===id); if(!q) return "";
-      const [text,opts] = q[lang]; return `<div class="qa"><span>${esc(text)}</span> <b>${esc(opts[i]||"")}</b></div>`;
-    }).join("");
-    c.innerHTML = `<div class="top"><b>${fromKey(e.date).toLocaleDateString(LOC(),{weekday:"short",day:"numeric",month:"short"})}</b><span class="m">${MOODS[e.mood]||""}</span></div>
-      ${qa}
-      ${(e.good&&e.good.length) ? `<div class="sec">${t("goodThings")}</div><ul>${e.good.map(g=>`<li>${esc(g)}</li>`).join("")}</ul>` : ""}
-      ${(e.text||e.audio) ? `<div class="sec">${t("learned")}</div>` : ""}${e.text ? `<div>${esc(e.text)}</div>` : ""}
-      ${e.challenge ? `<div class="sec">${t("challengeTag")}</div>` : ""}`;
-    if(e.audio){ const a = document.createElement("audio"); a.controls = true; a.src = URL.createObjectURL(e.audio);
-      const sec = c.querySelectorAll(".sec"); const after = [...sec].find(s=>s.textContent===t("learned"));
-      after ? after.after(a) : c.appendChild(a); }
+    if(it.kind==="n"){
+      const n = it.n;
+      const time = new Date(n.created).toLocaleTimeString(LOC(),{hour:"numeric",minute:"2-digit"});
+      c.innerHTML = `<div class="ntop"><span class="hint" style="margin:0">${t("noteTag")} · ${dfmt(n.date)}, ${time}</span><button class="del">${t("del")}</button></div>
+        ${n.title ? `<b style="display:block;margin-bottom:4px">${esc(n.title)}</b>` : ""}${n.text ? `<div class="ntxt">${esc(n.text)}</div>` : ""}`;
+      if(n.audio){ const a = document.createElement("audio"); a.controls = true; a.src = URL.createObjectURL(n.audio); c.appendChild(a); }
+      const db_ = c.querySelector(".del");
+      db_.onclick = () => {
+        if(!db_.classList.contains("armed")){ db_.classList.add("armed"); db_.textContent = t("deleteQ");
+          setTimeout(()=>{ db_.classList.remove("armed"); db_.textContent = t("del"); }, 3000); return; }
+        S.notes = S.notes.filter(x=>x.id!==n.id); del("notes",n.id); renderJournal();
+      };
+    } else {
+      const e = it.d;
+      const qa = Object.entries(e.answers||{}).map(([id,i])=>{
+        const q = QUESTIONS.find(x=>x.id===id); if(!q) return "";
+        const [text,opts] = q[lang]; return `<div class="qa"><span>${esc(text)}</span> <b>${esc(opts[i]||"")}</b></div>`;
+      }).join("");
+      c.innerHTML = `<div class="top"><b>${t("checkinTag")} · ${dfmt(e.date)}</b><span class="m">${MOODS[e.mood]||""}</span></div>
+        ${qa}
+        ${(e.good&&e.good.length) ? `<div class="sec">${t("goodThings")}</div><ul>${e.good.map(g=>`<li>${esc(g)}</li>`).join("")}</ul>` : ""}
+        ${(e.text||e.audio) ? `<div class="sec learned">${t("learned")}</div>` : ""}${e.text ? `<div class="ntxt">${esc(e.text)}</div>` : ""}
+        ${e.challenge ? `<div class="sec">${t("challengeTag")}</div>` : ""}`;
+      if(e.audio){ const a = document.createElement("audio"); a.controls = true; a.src = URL.createObjectURL(e.audio);
+        const l = c.querySelector(".learned"); const txt = l && l.nextElementSibling && l.nextElementSibling.classList.contains("ntxt") ? l.nextElementSibling : l;
+        txt ? txt.after(a) : c.appendChild(a); }
+    }
     box.appendChild(c);
   });
 }
 
 /* ================= start ================= */
 (async()=>{
-  applyLang();
   db = await openDB();
-  if(db){ (await getAll("days")).forEach(d=>S.days[d.date]=d); S.tasks = await getAll("tasks"); }
+  if(db){
+    (await getAll("days")).forEach(d=>S.days[d.date]=d);
+    S.tasks = await getAll("tasks");
+    S.notes = await getAll("notes");
+  }
   rollTasks();
-  renderRoutine(); renderWater(); renderChallenge(); renderTasks(); renderSummary();
+  applyLang();
   const d = S.days[TODAY]; if(d && d.checkin) loadCheckin(d);
 })();
 </script>
