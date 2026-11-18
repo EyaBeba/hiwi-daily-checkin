@@ -80,3 +80,43 @@ html.locked .wrap{visibility:hidden}
 .pinset h3{margin-top:18px}
 .wmark,.arrival-mark{pointer-events:none}.wlang{z-index:1}
 #langBtn,.wlang{display:none!important}
+/* themes */
+[data-palette=lavender]{--rose:#7b62a8;--rose-soft:#ece6f6;--lav:#9a7fc4;--lav-soft:#efe9f7;--bg:#f7f5fa}
+[data-palette=peach]{--rose:#bf6448;--rose-soft:#fbe6dc;--lav:#cf8a6a;--lav-soft:#f8eae1;--bg:#fbf6f1}
+[data-palette=sage]{--rose:#5c7d61;--rose-soft:#e2ece1;--lav:#7c9a7f;--lav-soft:#e7efe6;--bg:#f4f6f1}
+[data-theme=dark][data-palette=lavender]{--rose:#cbb6f0;--rose-soft:#3b3150;--lav:#b9a6e0;--lav-soft:#332b45;--bg:#1f1c26}
+[data-theme=dark][data-palette=peach]{--rose:#f2b39a;--rose-soft:#4a3029;--lav:#e5a88e;--lav-soft:#3d2c27;--bg:#221d1c}
+[data-theme=dark][data-palette=sage]{--rose:#b5d1b6;--rose-soft:#2f3d31;--lav:#a6c2a8;--lav-soft:#2a352b;--bg:#1b201c}
+.swatches{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.swatch{display:flex;flex-direction:column;align-items:flex-start;gap:4px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;text-align:left}
+.swatch i{width:26px;height:26px;border-radius:50%;display:block}.swatch small{font-size:11px;font-weight:400;color:var(--soft);min-height:14px}
+.swatch.on{outline:2px solid var(--rose);outline-offset:1px}.swatch.locked{opacity:.55;cursor:default}
+/* morning / night tint */
+body[data-tod=morning]{background:radial-gradient(ellipse at 85% 0%,#ffe9c7,transparent 45%),var(--bg)}
+body[data-tod=night]{background:radial-gradient(ellipse at 85% 0%,#d9d3f0,transparent 45%),var(--bg)}
+[data-theme=dark] body[data-tod=morning]{background:radial-gradient(ellipse at 85% 0%,#4a3a26,transparent 45%),var(--bg)}
+[data-theme=dark] body[data-tod=night]{background:radial-gradient(ellipse at 85% 0%,#2d2846,transparent 45%),var(--bg)}
+/* petals */
+.petals{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}
+.petals span{position:absolute;top:-30px;animation:petal linear forwards}
+@keyframes petal{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(110vh) rotate(360deg);opacity:.2}}
+/* little card */
+.little{padding:16px 18px;display:grid;gap:14px}
+.giftbtn{width:100%;display:flex;align-items:center;gap:12px;border:1px dashed var(--rose);background:var(--rose-soft);color:var(--ink);border-radius:16px;padding:12px 14px;font:inherit;font-weight:700;font-size:14px;cursor:pointer}
+.gbox{font-size:28px;display:inline-block;animation:wiggle 2.4s ease-in-out infinite}
+@keyframes wiggle{0%,80%,100%{transform:rotate(0)}85%{transform:rotate(-12deg)}90%{transform:rotate(10deg)}95%{transform:rotate(-6deg)}}
+.giftbtn.pop .gbox{animation:none;transform:scale(1.4);transition:transform .25s}
+.gift small,.tot small{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--rose);margin-bottom:6px}
+.gift .serif{font-size:18px;line-height:1.5;animation:jarpop .4s ease-out}.gift .link{display:inline-block;margin-top:4px}
+.totrow{display:flex;align-items:center;gap:8px}.totrow button{flex:1;border:1px solid var(--line);background:var(--field);color:var(--ink);border-radius:12px;min-height:46px;font:inherit;font-size:13px;cursor:pointer;padding:6px}
+.totrow button.on{border-color:var(--rose);background:var(--rose-soft);font-weight:700}.totrow .or{font-size:11px;color:var(--soft)}
+/* letters */
+.lbanner{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;font-weight:700;font-size:14px;color:var(--ink);background:var(--rose-soft);border:1px solid var(--rose);cursor:pointer}
+.lbanner[hidden]{display:none!important}.lbicon{font-size:28px;animation:wiggle 2.4s ease-in-out infinite}
+.future textarea{min-height:110px;margin-bottom:10px}.future .chips{margin-bottom:12px}.sealed{margin-top:14px;display:grid;gap:6px}.sealed p{font-size:13px;color:var(--soft)}
+/* garden + about */
+.bed{display:flex;flex-wrap:wrap;gap:4px 6px;padding:18px 12px 14px;border-radius:16px;background:linear-gradient(180deg,transparent 55%,color-mix(in srgb,var(--rose-soft) 70%,#c8a98a 30%) 100%),var(--rose-soft);min-height:84px;align-items:flex-end}
+.flower{font-size:26px;display:inline-block;transform-origin:bottom center;animation:sway 4s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+.aboutchips{display:flex;flex-wrap:wrap;gap:6px}.aboutchips span{background:var(--rose-soft);border-radius:999px;padding:6px 12px;font-size:13px}
+@media(prefers-reduced-motion:reduce){.flower,.gbox,.lbicon{animation:none}}
