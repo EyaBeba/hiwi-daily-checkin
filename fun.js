@@ -55,6 +55,9 @@ const dayIdx = k => numOf(k);
 const checkins = () => Object.values(S.days).filter(d=>d.checkin);
 const fmtDay = (k,o={weekday:'short',day:'numeric',month:'short'}) => fromKey(k).toLocaleDateString(LOC(),o);
 
+function pickSurprise(k){ return SURPRISES[(dayIdx(k)*7) % SURPRISES.length]; }
+function themeOpen(t){ return checkins().length>=t.need; }
+
 /* ---------- petals ---------- */
 function petals(){
  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -71,7 +74,7 @@ function petals(){
 /* ---------- themes ---------- */
 function applyPalette(){ document.documentElement.dataset.palette = lsGet('palette') || 'plum'; }
 applyPalette();
-function unlockedThemes(){ const n = checkins().length; return THEMES.filter(t=>n>=t.need).map(t=>t.id); }
+function unlockedThemes(){ return THEMES.filter(t=>themeOpen(t)).map(t=>t.id); }
 function checkNewThemes(announce){
  const seen = (lsGet('themes-seen')||'plum').split(',');
  const fresh = unlockedThemes().filter(id=>!seen.includes(id));
@@ -85,7 +88,7 @@ function renderThemes(){
  themeBox.replaceChildren(mk('h3',null,'🎨 Themes'));
  const n = checkins().length, row = mk('div','swatches'), cur = lsGet('palette') || 'plum';
  THEMES.forEach(t=>{
-  const open = n>=t.need, b = mk('button','swatch'+(cur===t.id?' on':'')+(open?'':' locked')); b.type = 'button';
+  const open = themeOpen(t), b = mk('button','swatch'+(cur===t.id?' on':'')+(open?'':' locked')); b.type = 'button';
   const dot = mk('i'); dot.style.background = t.sw; b.append(dot, mk('span',null,t.name), mk('small',null, open ? (cur===t.id?'In use':'') : `🔒 ${t.need} check-ins`));
   b.disabled = !open; b.onclick = () => { lsSet('palette', t.id); applyPalette(); renderThemes(); };
   row.append(b);
@@ -113,12 +116,12 @@ const little = mk('div','card little');
 function renderLittle(){
  little.replaceChildren();
  const d = S.days[VIEW] || {}, i = dayIdx(VIEW);
- const sp = SURPRISES[(i*7) % SURPRISES.length];
+ const sp = pickSurprise(VIEW);
  const gift = mk('div','gift');
  if(d.surprise){
   const lab = mk('small',null,`${sp[0]} ${sp[1]}`), txt = mk('p','serif',sp[2]);
   gift.append(lab, txt);
-  if(sp[1]==='Song for today'){ const a = mk('a','link','Listen on YouTube ↗'); a.href = 'https://www.youtube.com/results?search_query='+encodeURIComponent(sp[2].replace(' · ',' ')); a.target = '_blank'; a.rel = 'noopener'; gift.append(a); }
+  if(sp[1]==='Song for today'){ const a = mk('a','link','Listen on YouTube ↗'); a.href = 'https://www.youtube.com/results?search_query='+encodeURIComponent(sp[3] || sp[2].replace(' · ',' ')); a.target = '_blank'; a.rel = 'noopener'; gift.append(a); }
  } else {
   const b = mk('button','giftbtn'); b.type = 'button';
   b.append(mk('span','gbox','🎁'), mk('span',null, VIEW===TODAY ? "Open today's surprise" : 'Open this day\'s surprise'));
@@ -223,6 +226,6 @@ document.getElementById('save').addEventListener('click', () => {
 const viewBase2 = renderView; renderView = function(){ viewBase2(); renderLittle(); renderBanner(); };
 const langBase2 = applyLang; applyLang = function(){ langBase2(); applyTimeOfDay(); renderLittle(); renderBanner(); };
 (function(){ const s = document.getElementById('settings'); if(!s) return; document.getElementById('settingsBtn').addEventListener('click', renderThemes); const pin = s.querySelector('.pinset'); pin ? pin.before(themeBox) : s.append(themeBox); renderThemes(); })();
-setInterval(applyTimeOfDay, 5*60*1000);
+setInterval(()=>applyTimeOfDay(), 5*60*1000);
 // existing unlocks shouldn't announce themselves on first load
 setTimeout(()=>checkNewThemes(false), 1500);

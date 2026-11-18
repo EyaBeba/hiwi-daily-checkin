@@ -169,7 +169,7 @@
   .bbtns{display:flex;gap:10px;margin-top:26px}
   .bbtns button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:10px 22px;font:inherit;font-weight:700;cursor:pointer}
 </style>
-<link rel="stylesheet" href="gentle.css?v=1795041598">
+<link rel="stylesheet" href="gentle.css?v=1795042691">
 <script>/* English only for Hiwiye (Amharic text stays in the code for other versions) */try{localStorage.setItem("lang","en")}catch(e){}</script>
 <script>try{if(localStorage.getItem("pin-hash"))document.documentElement.classList.add("locked")}catch(e){}</script>
 </head>
@@ -563,7 +563,9 @@ const pad = n => String(n).padStart(2,"0");
 const keyOf = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const fromKey = k => { const [y,m,d] = k.split("-").map(Number); return new Date(y,m-1,d); };
 const numOf = k => { const d = fromKey(k); return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5); };
-let now = new Date();
+const DAY_START_HOUR = 4;
+const dayNow = () => new Date(Date.now() - DAY_START_HOUR*3600*1000);
+let now = dayNow();
 let TODAY = keyOf(now);
 let WEEK = (()=>{ const d = new Date(now); d.setDate(d.getDate()-((d.getDay()+6)%7)); return keyOf(d); })();
 const lastDays = n => Array.from({length:n},(_,i)=>{ const d = new Date(now); d.setDate(d.getDate()-(n-1-i)); return keyOf(d); });
@@ -787,7 +789,7 @@ function applyLang(){
 document.getElementById("langBtn").onclick = () => { lang = lang==="am" ? "en" : "am"; lsSet("lang",lang); applyLang(); };
 
 function setGreeting(){
-  const h = now.getHours();
+  const h = new Date().getHours();
   const part = t(h<12 ? "morning" : h<17 ? "afternoon" : "evening");
   const name = (lsGet("ci-name")||"").trim();
   document.getElementById("greet").textContent = name ? `${part}, ${name} 🌸` : `${part} 🌸`;
@@ -1104,11 +1106,12 @@ function renderJournal(){
 }
 
 </script>
-<script src="gentle.js?v=1795041598"></script>
-<script src="month.js?v=1795041598"></script>
-<script src="extras.js?v=1795041598"></script>
-<script src="looks.js?v=1795041598"></script>
-<script src="fun.js?v=1795041598"></script>
+<script src="gentle.js?v=1795042691"></script>
+<script src="month.js?v=1795042691"></script>
+<script src="extras.js?v=1795042691"></script>
+<script src="looks.js?v=1795042691"></script>
+<script src="fun.js?v=1795042691"></script>
+<script src="her.js?v=1795042691"></script>
 <script>
 /* ================= start ================= */
 (async()=>{

@@ -158,7 +158,7 @@ openDB=function(){return new Promise(resolve=>{try{const request=indexedDB.open(
 
 // Refresh calendar state when a phone returns to the app, including after midnight.
 async function refreshDay(){
- const fresh=new Date(),key=keyOf(fresh); if(key===TODAY)return;
+ const fresh=dayNow(),key=keyOf(fresh); if(key===TODAY)return;
  if([ciRec,nRec].some(r=>(r.rec&&r.rec.state!=='inactive')))return;
  await persistDraft();const wasToday=VIEW===TODAY;now=fresh;TODAY=key;const monday=new Date(now);monday.setDate(monday.getDate()-((monday.getDay()+6)%7));WEEK=keyOf(monday);
  if(wasToday){VIEW=TODAY;resetForm();[1,2,3,4].forEach(n=>$g('worry'+n).value='');if(S.days[TODAY]?.checkin)loadCheckin(S.days[TODAY]);else await restoreDraft();}

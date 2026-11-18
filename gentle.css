@@ -120,3 +120,15 @@ body[data-tod=night]{background:radial-gradient(ellipse at 85% 0%,#d9d3f0,transp
 @keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
 .aboutchips{display:flex;flex-wrap:wrap;gap:6px}.aboutchips span{background:var(--rose-soft);border-radius:999px;padding:6px 12px;font-size:13px}
 @media(prefers-reduced-motion:reduce){.flower,.gbox,.lbicon{animation:none}}
+/* rose theme + her bits */
+[data-palette=rose]{--rose:#c25d84;--rose-soft:#fbe4ee;--lav:#d38aa8;--lav-soft:#f8e8ef;--bg:#fcf6f8}
+[data-theme=dark][data-palette=rose]{--rose:#f3a9c6;--rose-soft:#4a2b39;--lav:#e7a3c0;--lav-soft:#3d2632;--bg:#221b1f}
+body[data-tod=off]{background:radial-gradient(ellipse at 85% 0%,#ffd9e4,transparent 45%),var(--bg)}
+[data-theme=dark] body[data-tod=off]{background:radial-gradient(ellipse at 85% 0%,#4a2b39,transparent 45%),var(--bg)}
+.offchip{margin-top:14px;border:1px solid var(--rose);background:transparent;color:var(--rose);border-radius:999px;padding:8px 16px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;min-height:40px}
+.offchip.on{background:var(--rose);color:var(--card)}.offchip[hidden],.nudge[hidden]{display:none!important}
+.nudge{margin-top:12px;font-size:14px;color:var(--ink)}
+.quiz{display:grid;gap:14px}.qstep{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--rose);font-weight:700}
+.qopts{display:grid;gap:10px}.qopts button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:16px;min-height:54px;font:inherit;font-size:16px;font-weight:600;cursor:pointer;text-align:left;padding:0 18px}
+.qopts button.on{border-color:var(--rose);background:var(--rose-soft)}.quiz .link{justify-self:center}
+.aboutchips .mine{background:var(--rose);color:var(--card)}
