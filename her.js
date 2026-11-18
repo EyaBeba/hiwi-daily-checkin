@@ -11,7 +11,7 @@ if(!lsGet('gentle-routines')){
 const QUIZ = [
  {key:'colour', q:'Pick your colour 🎨', opts:['💗 Pink','💜 Purple','🍑 Peach','🌿 Green']},
  {key:'music', q:'What music do you love? 🎵', opts:['🎤 English songs','🇪🇹 Ethiopian songs','💫 Both']},
- {key:'unwind', q:'After a long shift, what helps you most? 🌙', opts:['🍵 A warm cup of Karar','🎧 Music','📞 Talking to someone','😴 Just sleep']}
+ {key:'unwind', q:'After a long shift, what helps you most? 🌙', opts:['🍵 A warm cup of Karak chai','🎧 Music','📞 Talking to someone','😴 Just sleep']}
 ];
 const COLOUR_THEME = ['rose','lavender','peach','sage'];
 const answers = () => { try{ return JSON.parse(lsGet('quiz')||'{}'); }catch(e){ return {}; } };
@@ -68,7 +68,16 @@ const BIG_DARES = [
 ];
 const SONGS = {
  en:[['Here Comes the Sun · The Beatles'],['Lovely Day · Bill Withers'],['Unwritten · Natasha Bedingfield'],['Rise Up · Andra Day'],['Count on Me · Bruno Mars'],['Golden Hour · JVKE'],['Three Little Birds · Bob Marley']],
- et:[['Tezeta · Mulatu Astatke'],['Yekermo Sew · Mulatu Astatke'],['Ere Mela Mela · Mahmoud Ahmed'],['Tikur Sew · Teddy Afro'],['Ethiopia · Teddy Afro'],['Kabu · Aster Aweke']]
+ et:[ // her favourite artists; the link searches the artist so she picks the song
+  ['Put on your favourite Veronica Adane song 🎶','Veronica Adane'],
+  ['A Teddy Afro song you have not heard in a while 🎶','Teddy Afro'],
+  ['Start the day with Abinet Agonafer 🎶','Abinet Agonafer'],
+  ['Tamrat Desta for your mood today 🎶','Tamrat Desta'],
+  ['Sing along to Veronica Adane today 🎶','Veronica Adane'],
+  ['Your Teddy Afro favourite, on repeat 🎶','Teddy Afro'],
+  ['Something soft from Abinet Agonafer 🎶','Abinet Agonafer'],
+  ['Your favourite Tamrat Desta song, full volume 🎶','Tamrat Desta']
+ ]
 };
 const surpriseBase = pickSurprise;
 pickSurprise = function(k){
@@ -76,13 +85,13 @@ pickSurprise = function(k){
  if(sp[1]==='Tiny dare' && isOff(k)) return ['🌸','Day-off dare', BIG_DARES[n % BIG_DARES.length]];
  if(sp[1]==='Song for today'){
   const m = answers().music, list = m===0 ? SONGS.en : m===1 ? SONGS.et : (n%2 ? SONGS.et : SONGS.en);
-  return ['🎵','Song for today', list[Math.floor(n/4) % list.length][0]];
+  const song = list[Math.floor(n/4) % list.length]; return ['🎵','Song for today', song[0], song[1]];
  }
  return sp;
 };
 
 /* ---------- greetings that follow her day ---------- */
-const UNWIND = ['Maybe a warm cup of Karar first? 🍵','Maybe put on a song you love 🎧','Maybe call someone you love 📞','Then straight to sleep. You deserve the rest 😴'];
+const UNWIND = ['Maybe a warm cup of Karak chai first? 🍵','Maybe put on a song you love 🎧','Maybe call someone you love 📞','Then straight to sleep. You deserve the rest 😴'];
 function herMode(){
  const real = new Date(), h = real.getHours();
  if(isOff(TODAY)) return 'off';
@@ -125,7 +134,7 @@ const aboutBase = aboutCard;
 aboutCard = function(){
  const card = aboutBase(), a = answers();
  const mine = QUIZ.map(q=>a[q.key]!=null ? q.opts[a[q.key]] : null).filter(Boolean)
-  .map(t=>t==='🍵 A warm cup of Karar' ? '🍵 Karar after work' : t);
+  .map(t=>t==='🍵 A warm cup of Karak chai' ? '🍵 Karak chai after work' : t);
  if(!mine.length) return card;
  let chips = card.querySelector('.aboutchips');
  if(!chips){ card.querySelector('.hint')?.remove(); chips = mk('div','aboutchips'); card.append(chips); }
