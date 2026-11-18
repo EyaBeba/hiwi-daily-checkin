@@ -650,6 +650,9 @@ function makeRecorder(p){
   wrap.append(extra, sel, tip);
   if(!canRecord){ btn.disabled = true; btn.style.opacity = .4; }
   const state = () => R.rec ? R.rec.state : "inactive";
+  let usingPhoneMic = false;
+  const isBT = label => /bluetooth|airpods|buds|headset|hands.?free|headphone|earphone|\bbt\b|wireless/i.test(label||"");
+  const inputs = async () => { try{ return (await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==="audioinput"); }catch(e){ return []; } };
   function ui(){
     const s = state();
     btn.classList.toggle("live", s==="recording");
@@ -659,8 +662,11 @@ function makeRecorder(p){
     else status.textContent = canRecord ? t("tapRec") : t("noVoice");
     extra.classList.toggle("hidden", s==="inactive");
     extra.textContent = s==="recording" ? tr("Pause","ለአፍታ አቁሚ") : tr("Finish and keep recording","ጨርሺና አስቀምጪ");
-    tip.textContent = tr("Wireless earphone mics often sound less clear. For the clearest voice, hold the phone close and use its own mic.",
-      "የገመድ አልባ የጆሮ ማዳመጫ ማይክሮፎን ብዙ ጊዜ ግልጽ አይደለም። ለጥሩ ድምፅ ስልኩን አቅርበሽ የስልኩን ማይክሮፎን ተጠቀሚ።");
+    tip.textContent = tip.dataset.mode==="phone"
+      ? tr("🎙️ Using your phone's microphone for a clear voice, even with earphones on. Hold the phone near you.",
+           "🎙️ ለግልጽ ድምፅ የስልኩ ማይክሮፎን እየተጠቀምን ነው። ስልኩን አቅርቢው።")
+      : tr("Earphone mics often sound less clear. If you can, pick your phone's microphone below.",
+           "የጆሮ ማዳመጫ ማይክሮፎን ብዙ ጊዜ ግልጽ አይደለም። ከተቻለ ከታች የስልኩን ማይክሮፎን ምረጪ።");
     if(sel.options[0]) sel.options[0].textContent = tr("Microphone: automatic","ማይክሮፎን፦ ራስ-ሰር");
   }
   R.idleText = ui;
@@ -697,17 +703,30 @@ function makeRecorder(p){
     R.rec.resume(); note = ""; tick(); lock(); ui();
   }
   async function start(){
-    const audio = {echoCancellation:true, noiseSuppression:true, autoGainControl:true, channelCount:{ideal:1}, sampleRate:{ideal:48000}};
-    const chosen = lsGet("mic-id"); if(chosen) audio.deviceId = {exact:chosen};
+    // Like WhatsApp: no "call mode" processing (that switches Android to the Bluetooth call mic),
+    // and prefer the phone's own microphone even when earphones are connected.
+    const audio = {echoCancellation:false, noiseSuppression:false, autoGainControl:false, channelCount:{ideal:1}, sampleRate:{ideal:48000}};
+    let chosen = lsGet("mic-id");
+    if(!chosen){
+      let ds = await inputs();
+      if(!ds.some(d=>d.label)){ // first time: ask permission once so device names become visible
+        try{ const probe = await navigator.mediaDevices.getUserMedia({audio:true}); probe.getTracks().forEach(x=>x.stop()); }catch(e){ status.textContent = t("noMic"); return; }
+        ds = await inputs();
+      }
+      const phone = ds.find(d=>!isBT(d.label) && !["default","communications"].includes(d.deviceId));
+      if(phone && ds.some(d=>isBT(d.label))){ chosen = phone.deviceId; usingPhoneMic = true; } else usingPhoneMic = false;
+    }
+    if(chosen) audio.deviceId = {exact:chosen};
     try{ stream = await navigator.mediaDevices.getUserMedia({audio}); }
     catch(e){
-      if(chosen){ lsSet("mic-id",""); delete audio.deviceId;
+      if(chosen){ if(lsGet("mic-id")) lsSet("mic-id",""); delete audio.deviceId;
         try{ stream = await navigator.mediaDevices.getUserMedia({audio}); }catch(e2){ status.textContent = t("noMic"); return; } }
       else { status.textContent = t("noMic"); return; }
     }
     listMics();
     const track = stream.getAudioTracks()[0];
-    tip.classList.toggle("hidden", !/bluetooth|airpods|buds|headset|hands.?free|headphone|earphone/i.test(track.label||""));
+    tip.dataset.mode = usingPhoneMic ? "phone" : "bt";
+    tip.classList.toggle("hidden", !(usingPhoneMic || isBT(track.label)));
     // A phone call (or another app) can mute or take the mic: pause, or keep what was recorded.
     track.onmute = () => pause(tr("A call or another app used the microphone.","ጥሪ ወይም ሌላ መተግበሪያ ማይክሮፎኑን ተጠቀመ።"));
     track.onended = () => { if(state()!=="inactive"){ lostMsg = tr("The microphone was taken away, so your recording was kept up to that point.","ማይክሮፎኑ ስለተወሰደ እስከዚያ ድረስ የተቀዳው ተቀምጧል።"); R.rec.stop(); } };
