@@ -9,17 +9,19 @@ if(!lsGet('gentle-routines')){
 
 /* ---------- her answers ---------- */
 const QUIZ = [
- {key:'colour', q:'Pick your colour 🎨', opts:['💗 Pink','💜 Purple','🍑 Peach','🌿 Green']},
+ {key:'colour', q:'Pick your favourite colours 🎨', hint:'Choose as many as you like.', multi:true, opts:['💗 Pink','💜 Purple','🍑 Peach','🌿 Green','💙 Blue','❤️ Red','💛 Yellow','🖤 Black & white']},
  {key:'music', q:'What music do you love? 🎵', opts:['🎤 English songs','🇪🇹 Ethiopian songs','💫 Both English & Ethiopian']},
  {key:'unwind', q:'After a long shift, what helps you most? 🌙', opts:['🍵 A warm cup of Karak chai','🎧 Music','📞 Talking to someone','😴 Just sleep']}
 ];
-const COLOUR_THEME = ['rose','lavender','peach','sage'];
+const COLOUR_THEME = ['rose','lavender','peach','sage','ocean','berry','honey','mono'];
+const COLOUR_NAME = ['pink','purple','peach','green','blue','red','yellow','black & white'];
+const colours = () => { const c = answers().colour; return c==null ? [] : Array.isArray(c) ? c : [c]; };
 const answers = () => { try{ return JSON.parse(lsGet('quiz')||'{}'); }catch(e){ return {}; } };
 
 /* a pinker theme, so "Pink" has its own */
-THEMES.push({id:'rose', name:'Rose', need:15, sw:'#c25d84'});
+THEMES.push({id:'rose', name:'Rose', need:15, sw:'#c25d84'},{id:'ocean', name:'Ocean', need:12, sw:'#3f6f96'},{id:'berry', name:'Berry', need:18, sw:'#a33a4f'},{id:'honey', name:'Honey', need:25, sw:'#a8741a'},{id:'mono', name:'Mono', need:30, sw:'#2f2b30'});
 const themeOpenBase = themeOpen;
-themeOpen = t => themeOpenBase(t) || COLOUR_THEME[answers().colour]===t.id;
+themeOpen = t => themeOpenBase(t) || colours().some(i=>COLOUR_THEME[i]===t.id);
 
 function showQuiz(done){
  let i = 0; const picked = answers();
@@ -27,17 +29,30 @@ function showQuiz(done){
   welcome.replaceChildren();
   const box = mk('div','wbox quiz'), q = QUIZ[i];
   box.append(mk('small','qstep',`${i+1} of ${QUIZ.length} · so this space feels like yours`), mk('h2',null,q.q));
-  const opts = mk('div','qopts');
-  q.opts.forEach((o,j)=>{ const b = mk('button', picked[q.key]===j?'on':'', o); b.type = 'button';
-   b.onclick = () => { picked[q.key] = j; lsSet('quiz', JSON.stringify(picked)); i++; i<QUIZ.length ? step() : finish(); };
+  if(q.hint) box.append(mk('p','hint',q.hint));
+  const opts = mk('div','qopts'+(q.multi?' multi':''));
+  const next = () => { i++; i<QUIZ.length ? step() : finish(); };
+  let chosen = q.multi ? (Array.isArray(picked[q.key]) ? [...picked[q.key]] : picked[q.key]!=null ? [picked[q.key]] : []) : null;
+  q.opts.forEach((o,j)=>{
+   const on = q.multi ? chosen.includes(j) : picked[q.key]===j;
+   const b = mk('button', on?'on':'', o); b.type = 'button';
+   b.onclick = () => {
+    if(q.multi){ chosen = chosen.includes(j) ? chosen.filter(x=>x!==j) : [...chosen, j]; b.classList.toggle('on'); go.disabled = !chosen.length; return; }
+    picked[q.key] = j; lsSet('quiz', JSON.stringify(picked)); next();
+   };
    opts.append(b); });
-  const skip = mk('button','link','Skip'); skip.type = 'button'; skip.onclick = () => { i++; i<QUIZ.length ? step() : finish(); };
-  box.append(opts, skip); welcome.append(box);
+  const go = mk('button','btn','Next'); go.type = 'button';
+  if(q.multi){ go.disabled = !chosen.length; go.onclick = () => { picked[q.key] = chosen; lsSet('quiz', JSON.stringify(picked)); next(); }; }
+  const skip = mk('button','link','Skip'); skip.type = 'button'; skip.onclick = next;
+  box.append(opts); if(q.multi) box.append(go); box.append(skip); welcome.append(box);
  };
  const finish = () => {
   lsSet('quiz-done','1');
   const a = answers();
-  if(a.colour!=null){ const th = COLOUR_THEME[a.colour]; lsSet('palette', th); const seen = (lsGet('themes-seen')||'plum').split(','); if(!seen.includes(th)) lsSet('themes-seen', [...seen, th].join(',')); applyPalette(); renderThemes(); }
+  const cs = colours();
+  if(cs.length){ const th = COLOUR_THEME[cs[0]]; lsSet('palette', th);
+   const seen = (lsGet('themes-seen')||'plum').split(','); cs.forEach(i=>{ if(!seen.includes(COLOUR_THEME[i])) seen.push(COLOUR_THEME[i]); }); lsSet('themes-seen', seen.join(','));
+   applyPalette(); renderThemes(); }
   done(); petals(); renderLittle(); applyTimeOfDay();
  };
  step();
@@ -130,11 +145,12 @@ const aboutBase = aboutCard;
 aboutCard = function(){
  const card = aboutBase(), a = answers();
  const ABOUT = {
-  colour:['💗 Favourite colour: pink','💜 Favourite colour: purple','🍑 Favourite colour: peach','🌿 Favourite colour: green'],
   music:['🎤 Loves English songs','🇪🇹 Loves Ethiopian music','🎶 Loves both English & Ethiopian music'],
   unwind:['🍵 Unwinds with Karak chai after work','🎧 Unwinds with music after work','📞 Unwinds by talking to someone','😴 Unwinds with a good sleep']
  };
- const mine = QUIZ.map(q=>a[q.key]!=null ? ABOUT[q.key][a[q.key]] : null).filter(Boolean);
+ const cs = colours();
+ const colourChip = cs.length ? `${QUIZ[0].opts[cs[0]].split(' ')[0]} Favourite ${cs.length>1?'colours':'colour'}: ${cs.length>1 ? cs.slice(0,-1).map(i=>COLOUR_NAME[i]).join(', ')+' & '+COLOUR_NAME[cs[cs.length-1]] : COLOUR_NAME[cs[0]]}` : null;
+ const mine = [colourChip, ...QUIZ.slice(1).map(q=>a[q.key]!=null ? ABOUT[q.key][a[q.key]] : null)].filter(Boolean);
  if(!mine.length) return card;
  let chips = card.querySelector('.aboutchips');
  if(!chips){ card.querySelector('.hint')?.remove(); chips = mk('div','aboutchips'); card.append(chips); }
@@ -143,7 +159,7 @@ aboutCard = function(){
 };
 (function(){
  const s = document.getElementById('settings'); if(!s) return;
- const b = mk('button','link','✏️ Change my colour, music and unwind answers'); b.type = 'button';
+ const b = mk('button','link','✏️ Change my colours, music and unwind answers'); b.type = 'button';
  b.onclick = () => { document.getElementById('settingsPanel').hidden = true; welcome.hidden = false; document.body.style.overflow = 'hidden'; showQuiz(()=>{ welcome.hidden = true; document.body.style.overflow = ''; }); };
  const holder = s.querySelector('.xsettings'); holder ? holder.append(b) : s.append(b);
 })();
