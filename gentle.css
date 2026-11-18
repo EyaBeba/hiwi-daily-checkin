@@ -22,3 +22,14 @@ summary{cursor:pointer;min-height:44px;align-content:center;font-weight:700;line
 #storageWarning{background:var(--rose-soft);border:2px solid var(--rose);border-radius:14px;padding:16px;margin-bottom:16px;font-size:14px}button:focus-visible,summary:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--rose);outline-offset:4px}button{touch-action:manipulation}.orb{background:linear-gradient(130deg,var(--rose),var(--lav));box-shadow:none;width:190px;height:190px}#bText{font-size:25px}#bSub{max-width:310px;font-size:14px;line-height:1.8}
 @media(max-width:370px){body{padding:16px 12px 32px}.card{padding:18px}.arrival h2{font-size:34px}.arrival-mark{font-size:32px}.calm-card{display:block}.calm-card .calm{max-width:none;width:100%;margin-top:14px}.gentle-days span{width:34px;height:34px}.tabs button{font-size:11px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+/* Four-week look back */
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;justify-items:center;margin:6px 0 10px}.mwd{font-size:10px;color:var(--soft)}
+.mdot{width:34px;height:34px;border-radius:50%;border:1px dashed var(--line);background:transparent;cursor:pointer;padding:0;transition:transform .15s}
+.mdot.today{outline:2px solid var(--rose);outline-offset:2px}.mdot.sel{transform:scale(1.15);box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--ink)}
+.mdot[style]{border:0}.mdetail{font-size:13px;text-align:center;min-height:20px;color:var(--ink);margin-bottom:8px}
+.mlegend{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 12px;font-size:11px;color:var(--soft)}.mlegend span{display:flex;align-items:center;gap:5px}.mlegend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.minsights{border-top:1px solid var(--line);margin-top:16px;padding-top:12px}.minsights p{font-size:14px;line-height:1.7;margin:4px 0}
+.jarout{background:var(--rose-soft);border-radius:16px;padding:18px;text-align:center;margin-bottom:12px}.jarout .serif{font-size:19px;line-height:1.5}.jarout small{color:var(--soft);font-size:11px;display:block;margin-top:8px}
+.jarout.pop{animation:jarpop .35s ease-out}@keyframes jarpop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+.letter .lbody{background:var(--rose-soft);border-radius:16px;padding:20px;font-size:14px;line-height:1.8}.letter .lbody p{margin:0 0 10px}.letter .lbody .serif{font-size:19px}.letter ul{padding-left:20px;margin-bottom:10px}
+@media(max-width:370px){.mdot{width:28px;height:28px}.mgrid{gap:6px}}

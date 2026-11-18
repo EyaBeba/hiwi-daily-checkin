@@ -84,11 +84,11 @@ renderSummary=()=>{};
 encouragement=function(d){
  const answers=d.answers||{};
  if(Number(d.mood)<=2 || ['carry','sleep','calm'].some(key=>answers[key]===2)) return lang==='am'
-  ? 'Hiwiyeye፣ ዛሬ ከባድ ቢሆንም ዋጋሽ አይቀንስም። ሁሉንም ዛሬ ማታ መፍታት አያስፈልግም።'
+  ? 'ሒዊይዬ፣ ዛሬ ከባድ ቢሆንም ዋጋሽ አይቀንስም። ሁሉንም ዛሬ ማታ መፍታት አያስፈልግም።'
   : 'Hiwiyeye, a hard day does not make you any less worthy of care. You do not have to solve everything tonight.';
  const count=Object.values(S.days).filter(day=>day.checkin).length;
- if(count===1) return lang==='am' ? 'Hiwiyeye፣ ይህ ትንሽ ቦታ የአንቺ ነው። በራስሽ ፍጥነት ተጠቀሚበት።' : 'Hiwiyeye, this little space is yours now. Use it at your own pace.';
- if(count===5) return lang==='am' ? 'Hiwiyeye፣ ለራስሽ የሰጠሻቸው አምስት ትንሽ ጊዜያት። ተከታታይ መሆን አያስፈልጋቸውም።' : 'Five little moments for yourself, Hiwiyeye. They never needed to be on consecutive days.';
+ if(count===1) return lang==='am' ? 'ሒዊይዬ፣ ይህ ትንሽ ቦታ የአንቺ ነው። በራስሽ ፍጥነት ተጠቀሚበት።' : 'Hiwiyeye, this little space is yours now. Use it at your own pace.';
+ if(count===5) return lang==='am' ? 'ሒዊይዬ፣ ለራስሽ የሰጠሻቸው አምስት ትንሽ ጊዜያት። ተከታታይ መሆን አያስፈልጋቸውም።' : 'Five little moments for yourself, Hiwiyeye. They never needed to be on consecutive days.';
  return g('done');
 };
 rollTasks=async()=>{};
