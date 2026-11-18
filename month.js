@@ -131,3 +131,26 @@ renderProgress = function(){
  section.append(calendarCard(st), jarCard());
  const l = letterCard(st); if(l) section.append(l);
 };
+
+/* Settings live behind a ⚙️ button in the header instead of at the bottom of every tab. */
+(function(){
+ const settings = document.getElementById('settings'); if(!settings) return;
+ const panel = mk('div','sheet'); panel.id = 'settingsPanel'; panel.hidden = true;
+ panel.setAttribute('role','dialog'); panel.setAttribute('aria-modal','true'); panel.setAttribute('aria-labelledby','settingsTitle');
+ const top = mk('div','sheet-top'), title = mk('h2'); title.id = 'settingsTitle';
+ const close = mk('button','sheet-close','✕'); close.type = 'button';
+ top.append(title, close); panel.append(top, settings);
+ settings.open = true; settings.querySelector('summary').hidden = true;
+ document.body.append(panel);
+ const btn = mk('button',null,'⚙️'); btn.type = 'button'; btn.id = 'settingsBtn';
+ document.querySelector('.hbtns').prepend(btn);
+ let back;
+ const open = () => { back = document.activeElement; panel.hidden = false; document.body.style.overflow = 'hidden'; close.focus(); };
+ const shut = () => { panel.hidden = true; document.body.style.overflow = ''; back?.focus(); };
+ btn.onclick = open; close.onclick = shut;
+ panel.addEventListener('keydown', e => { if(e.key==='Escape') shut(); });
+ const label = () => { const am = lang==='am';
+  title.textContent = am ? 'ማስተካከያ' : 'Settings';
+  btn.setAttribute('aria-label', am ? 'ማስተካከያ' : 'Settings'); close.setAttribute('aria-label', am ? 'ዝጊ' : 'Close'); };
+ const baseLang = applyLang; applyLang = function(){ baseLang(); label(); }; label();
+})();
