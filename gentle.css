@@ -55,3 +55,26 @@ summary{cursor:pointer;min-height:44px;align-content:center;font-weight:700;line
 .mdot.per{position:relative}.mdot.per::after,.perkey{content:"";position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border-radius:50%;background:#c94a5a;border:2px solid var(--card)}
 .perkey{position:static;display:inline-block;width:10px;height:10px;border:0}.cy-insight{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:14px;line-height:1.7}
 .xsettings{margin:8px 0 4px;border-top:1px solid var(--line);padding-top:8px}
+html.locked .wrap{visibility:hidden}
+/* looks */
+.lookrow{margin:-4px 0 16px}.lrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lookadd{border:1px dashed var(--line);background:transparent;color:var(--ink);border-radius:14px;min-height:48px;padding:0 16px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.lthumb{width:56px;height:56px;border-radius:14px;overflow:hidden;border:1px solid var(--line);padding:0;background:var(--card);cursor:pointer;position:relative;flex-shrink:0}
+.lthumb img{width:100%;height:100%;object-fit:cover;display:block}
+.lago{display:flex;align-items:center;gap:8px;margin-top:10px}.lago small{font-size:12px;color:var(--soft)}.lago .lthumb{width:40px;height:40px;border-radius:10px}
+.looksheet,.pinlock{display:flex;align-items:center;justify-content:center;z-index:75}.looksheet[hidden],.pinlock[hidden]{display:none!important}
+.lbox{max-width:420px;width:100%;display:grid;gap:12px}.lphoto{width:100%;max-height:58vh;object-fit:contain;border-radius:18px;background:var(--card)}
+.lmeta{font-size:13px;color:var(--soft);text-align:center}.lline{text-align:center;font-family:var(--serif);font-size:18px}
+.lbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lbtns .calm,.lbtns .btn{min-height:48px}.lbox>.link{justify-self:center}
+.link.danger.armed{color:#fff;background:#c94a5a;border-radius:999px;padding:6px 14px;text-decoration:none}
+.ghead{display:flex;justify-content:space-between;align-items:center}.ghead h2{margin-bottom:8px}
+.ggrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}.ggrid .lthumb{width:100%;height:auto;aspect-ratio:1}
+.gfav{position:absolute;right:5px;top:3px;color:#fff;text-shadow:0 1px 3px #0008;font-size:14px}
+/* pin */
+.pbox{max-width:320px;width:100%;text-align:center;display:grid;gap:14px;justify-items:center}.pbox h2{font-size:24px;font-weight:500}
+.pdots{display:flex;gap:14px;justify-content:center;margin:4px 0}.pdots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--rose)}.pdots i.on{background:var(--rose)}
+.pdots.shake{animation:shake .35s}@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.pmsg{min-height:20px;font-size:13px;color:var(--rose)}.pinfo{color:var(--soft);line-height:1.7}
+.pkeys{display:grid;grid-template-columns:repeat(3,72px);gap:12px}.pkeys button{height:72px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:24px;cursor:pointer}
+.pkeys .pblank{visibility:hidden}.pbox .calm,.pbox .btn{width:100%;min-height:48px}
+.pinset h3{margin-top:18px}
