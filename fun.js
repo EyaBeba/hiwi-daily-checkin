@@ -26,7 +26,7 @@ const SURPRISES = [
  ['🌍','Fun fact','Butterflies taste with their feet.'],
  ['✨','Tiny dare','Go outside and look at the sky for one full minute.'],
  ['🎵','Song for today','Count on Me · Bruno Mars'],
- ['💗','A little compliment','You are allowed to be proud of yourself today.'],
+ ['💗','A little compliment','Look how far you have come. Be proud of yourself today.'],
  ['🌍','Fun fact','A 20-second hug releases oxytocin, the "cuddle hormone".'],
  ['✨','Tiny dare','Compliment someone today, even a stranger.'],
  ['🎵','Song for today','Golden Hour · JVKE'],
