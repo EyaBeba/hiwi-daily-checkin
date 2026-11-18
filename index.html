@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#fdf0f4">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="My Day">
-<title>My Day 🌸</title>
+<meta name="apple-mobile-web-app-title" content="Hiwiye">
+<title>Hiwiye 🌸</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Nunito:wght@400;600;700&family=Noto+Sans+Ethiopic:wght@400;600;700&family=Noto+Serif+Ethiopic:wght@600&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -169,6 +169,7 @@
   .bbtns{display:flex;gap:10px;margin-top:26px}
   .bbtns button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:10px 22px;font:inherit;font-weight:700;cursor:pointer}
 </style>
+<link rel="stylesheet" href="gentle.css">
 </head>
 <body>
 <div class="wrap">
@@ -396,7 +397,7 @@ const MY_NOTES = [
 const T = {
 en:{
   today:"Today", tasks:"Tasks", progress:"Progress", journal:"Journal",
-  welcomeTitle:"Welcome to your little daily space 🌸", welcomeBody:"Tick off your routine, keep track of your tasks, and check in with yourself. Everything stays only on this phone.",
+  welcomeTitle:"Welcome to your little daily space 🌸", welcomeBody:"Tick off your routine, keep track of your tasks, and check in with yourself. Your entries are stored in this browser, without an account.",
   namePh:"What should I call you?", start:"Start",
   dateToday:"Today", pastHint:"You're filling in a past day 🗓️", saved:"Saved ✓",
   noteTitle:"Write anything ✍️", noteHint:"Thoughts, feelings, plans, a prayer, a dream… anything at all.", noteTitlePh:"Title (optional)",
@@ -408,8 +409,8 @@ en:{
   challengeLabel:"Today's self-love challenge 💝", challengeBtn:"I did it!", challengeDid:"Done 💕",
   tipLabel:"Feelings tip 🌿", calmBtn:"I need to calm down 🫧",
   checkinTitle:"Daily check-in 🌷", moodQ:"How are you feeling right now?",
-  goodQ:"3 good things from today", good1:"Something that made you smile…", good2:"Something you did well…", good3:"Something you're thankful for…",
-  learnedQ:"What's the most important thing you learned today?", learnedHint:"Write it or say it, whichever feels easier.",
+  goodQ:"One small thing that felt okay (optional)", good1:"Something that made you smile…", good2:"Something you did well…", good3:"Something you're thankful for…",
+  learnedQ:"Anything you want to put down here? (optional)", learnedHint:"Write it or say it, whichever feels easier.",
   write:"✍️ Write", voice:"🎙️ Voice note", textPh:"Just a few words is enough…",
   tapRec:"Tap to start recording", recording:"Recording…", tapStop:"tap to stop", delRec:"Delete and record again",
   noMic:"I couldn't reach the microphone. Please allow mic access, or write instead.",
@@ -420,7 +421,7 @@ en:{
   thisWeek:"this week", streak:"day streak", avgMood:"avg mood", perDay:"glasses / day", last7:"Last 7 days",
   barsHint:"Bars show how much of your routine you did · faces show your mood", howDoing:"How you're doing",
   journalEmpty:"Your check-ins will show up here 🌷", learned:"What I learned", goodThings:"Good things", challengeTag:"💝 Self-love challenge done",
-  foot:"Everything stays private on this phone 🔒",
+  foot:"Saved in this browser. You choose what to share.",
   breatheIn:"Breathe in…", hold:"Hold…", breatheOut:"Breathe out…", calmDone:"Well done. You came back to yourself 💕",
   calmSub:"Follow the circle. 5 slow breaths.", close:"Close", again:"Again",
   prayer:"Prayer", meals:"Meals", health:"Health & self-care",
@@ -477,7 +478,7 @@ const LOVE = [
   ["You deserve good things, not because you earn them, but because you are you.","መልካም ነገሮች ይገቡሻል፤ ስለሰራሽላቸው ሳይሆን አንቺ ስለሆንሽ።"],
   ["Your kindness makes people's days better, even when you don't see it.","ደግነትሽ የሰዎችን ቀን ያሳምራል፣ ባታይው እንኳ።"],
   ["You are allowed to rest. You don't have to prove anything today.","ማረፍ ይፈቀድልሻል። ዛሬ ምንም ማረጋገጥ የለብሽም።"],
-  ["The way you care about doing things right shows how big your heart is.","ነገሮችን በትክክል ለመስራት የምትጨነቂበት መንገድ ልብሽ ምን ያህል ትልቅ እንደሆነ ያሳያል።"],
+  ["You can care about your work without carrying everything yourself.","ነገሮችን በትክክል ለመስራት የምትጨነቂበት መንገድ ልብሽ ምን ያህል ትልቅ እንደሆነ ያሳያል።"],
   ["You deserve the same love you give to everyone else.","ለሌሎች የምትሰጪውን ፍቅር አንቺም ይገባሻል።"],
   ["You are enough, exactly as you are today.","ዛሬ ባለሽበት ሁኔታ፣ እንዳለሽ በቂ ነሽ።"],
   ["Your feelings make sense. You're learning to hold them gently.","ስሜቶችሽ ትርጉም አላቸው። በእርጋታ መያዝን እየተማርሽ ነው።"],
@@ -503,7 +504,7 @@ const CHALLENGES = [
 const TIPS = [
   [["Name it to tame it","When a strong feeling comes, name it: \"I feel hurt.\" Naming a feeling helps it calm down."],
    ["ስሜትሽን ሰይሚው","ጠንካራ ስሜት ሲመጣ ስሙን ጥሪው፦ \"ተጎድቻለሁ\"። ስሜትን መሰየም እንዲረጋጋ ይረዳል።"]],
-  [["The 90-second wave","Most feelings rise and pass in about 90 seconds if you just breathe and let them move through."],
+  [["Give the feeling room","Feelings can take time to settle. Try a short pause and notice what you need; there is no deadline to feel better."],
    ["የ90 ሰከንድ ማዕበል","ብዙ ስሜቶች ዝም ብለሽ ስትተነፍሺ በ90 ሰከንድ ገደማ ከፍ ብለው ያልፋሉ።"]],
   [["Pause before you reply","When someone upsets you, say \"Let me think about that\" and come back to it later."],
    ["ከመመለስሽ በፊት ቆም በዪ","አንድ ሰው ሲያስከፋሽ \"ላስብበት\" በዪና በኋላ ተመለሺበት።"]],
@@ -560,9 +561,9 @@ const pad = n => String(n).padStart(2,"0");
 const keyOf = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const fromKey = k => { const [y,m,d] = k.split("-").map(Number); return new Date(y,m-1,d); };
 const numOf = k => { const d = fromKey(k); return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5); };
-const now = new Date();
-const TODAY = keyOf(now);
-const WEEK = (()=>{ const d = new Date(now); d.setDate(d.getDate()-((d.getDay()+6)%7)); return keyOf(d); })();
+let now = new Date();
+let TODAY = keyOf(now);
+let WEEK = (()=>{ const d = new Date(now); d.setDate(d.getDate()-((d.getDay()+6)%7)); return keyOf(d); })();
 const lastDays = n => Array.from({length:n},(_,i)=>{ const d = new Date(now); d.setDate(d.getDate()-(n-1-i)); return keyOf(d); });
 const MAX_BACK = 30;
 let VIEW = TODAY;                      // the day being filled in on the Today tab
@@ -587,13 +588,24 @@ function openDB(){
     }catch(e){ res(null); }
   });
 }
-const getAll = store => new Promise(res=>{
-  try{ const r = db.transaction(store).objectStore(store).getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>res([]); }catch(e){ res([]); }
+const getAll = store => new Promise((res,reject)=>{
+  try{ const r = db.transaction(store).objectStore(store).getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>reject(r.error); }catch(e){ reject(e); }
 });
-function put(store,obj){ if(!db) return; try{ db.transaction(store,"readwrite").objectStore(store).put(obj); }catch(e){} }
-function del(store,key){ if(!db) return; try{ db.transaction(store,"readwrite").objectStore(store).delete(key); }catch(e){} }
+async function writeRecord(store, value, remove=false){
+  if(!db){ storageProblem(); return false; }
+  return new Promise(resolve=>{
+    try{
+      const tx=db.transaction(store,"readwrite");
+      if(remove) tx.objectStore(store).delete(value); else tx.objectStore(store).put(value);
+      tx.oncomplete=()=>resolve(true);
+      tx.onerror=tx.onabort=()=>{ storageProblem(); resolve(false); };
+    }catch(e){ storageProblem(); resolve(false); }
+  });
+}
+const put = (store,obj)=>writeRecord(store,obj);
+const del = (store,key)=>writeRecord(store,key,true);
 function day(k=VIEW){ if(!S.days[k]) S.days[k] = {date:k, routine:{}, water:0}; if(!S.days[k].routine) S.days[k].routine = {}; return S.days[k]; }
-function saveDay(d, quiet){ S.days[d.date] = d; put("days",d); if(!quiet) toast(); }
+async function saveDay(d, quiet){ const ok=await put("days",d); S.days[d.date]=d; if(ok && !quiet) toast(); return ok; }
 let waterGoal = Number(lsGet("water-goal")) || 8;
 const esc = s => { const x = document.createElement("div"); x.textContent = s; return x.innerHTML; };
 let toastT;
@@ -619,13 +631,13 @@ const fmt = s => `${Math.floor(s/60)}:${pad(s%60)}`;
 function makeRecorder(p){
   const $ = id => document.getElementById(p+id);
   const btn = $("RecBtn") || $("recBtn"), status = $("RecStatus") || $("recStatus");
-  const R = {blob:null, rec:null};
+  const R = {blob:null, rec:null, url:null};
   let chunks = [], timer = null, secs = 0, stream = null;
   if(!canRecord){ btn.disabled = true; btn.style.opacity = .4; }
   R.idleText = () => { if(!R.rec || R.rec.state!=="recording") status.textContent = canRecord ? t("tapRec") : t("noVoice"); };
   R.show = blob => {
     R.blob = blob;
-    if(blob) ($("Audio")||$("audio")).src = URL.createObjectURL(blob);
+    if(R.url) URL.revokeObjectURL(R.url); R.url=blob?URL.createObjectURL(blob):null; if(R.url) ($("Audio")||$("audio")).src = R.url; else ($("Audio")||$("audio")).removeAttribute("src");
     ($("Playback")||$("playback")).classList.toggle("hidden", !blob);
     ($("RecWrap")||$("recWrap")).classList.toggle("hidden", !!blob);
   };
@@ -639,7 +651,7 @@ function makeRecorder(p){
     R.rec.onstop = () => {
       stream.getTracks().forEach(x=>x.stop()); clearInterval(timer);
       btn.classList.remove("live"); btn.textContent = "🎙️"; status.textContent = t("tapRec");
-      R.show(new Blob(chunks,{type:R.rec.mimeType || ty || "audio/webm"}));
+      R.show(new Blob(chunks,{type:R.rec.mimeType || ty || "audio/webm"})); if(!p) persistDraft();
     };
     R.rec.start(); secs = 0;
     btn.classList.add("live"); btn.textContent = "■";
@@ -713,7 +725,7 @@ function renderView(){
 function setView(k){
   VIEW = k; resetForm();
   const d = S.days[VIEW]; if(d && d.checkin) loadCheckin(d);
-  renderView(); window.scrollTo({top:0});
+  renderView(); restoreDraft(); window.scrollTo({top:0});
 }
 function shift(n){ const d = fromKey(VIEW); d.setDate(d.getDate()+n); const k = keyOf(d); if(k<=TODAY) setView(k); }
 document.getElementById("prevDay").onclick = () => shift(-1);
@@ -796,12 +808,12 @@ function encouragement(d){
   if(Number(d.mood)>=4) return t("encGood");
   return t("encMid");
 }
-document.getElementById("save").onclick = () => {
+document.getElementById("save").onclick = async () => {
   const d = day();
   Object.assign(d, {mood:ci.mood, answers:{...ci.answers}, qids:viewQs().map(q=>q.id),
     good:["g1","g2","g3"].map(id=>document.getElementById(id).value.trim()).filter(Boolean),
-    text:document.getElementById("text").value.trim(), audio:ciRec.blob||null, checkin:true});
-  saveDay(d); showDone(d);
+    text:document.getElementById("text").value.trim(), audio:ciRec.blob||null, need:currentNeed, checkin:true});
+  if(await saveDay(d)){ await clearDraft(VIEW); showDone(d); }
 };
 function showDone(d){
   document.getElementById("form").classList.add("hidden");
@@ -814,6 +826,7 @@ document.getElementById("edit").onclick = () => {
 };
 function resetForm(){
   ci = {mood:null, answers:{}};
+  currentNeed=""; renderNeeds();
   document.querySelectorAll("#moods button").forEach(x=>x.classList.remove("on"));
   ["g1","g2","g3","text"].forEach(id=>document.getElementById(id).value = "");
   ciRec.show(null); setMode("text");
@@ -823,6 +836,7 @@ function resetForm(){
 }
 function loadCheckin(d){
   ci = {mood:d.mood, answers:{...(d.answers||{})}};
+  currentNeed=d.need||""; renderNeeds();
   document.querySelectorAll("#moods button").forEach(x=>x.classList.toggle("on", x.dataset.v==String(d.mood)));
   (d.good||[]).forEach((g,i)=>document.getElementById("g"+(i+1)).value = g);
   document.getElementById("text").value = d.text || "";
@@ -832,11 +846,11 @@ function loadCheckin(d){
 }
 
 /* ================= free notes ================= */
-document.getElementById("nSave").onclick = () => {
+document.getElementById("nSave").onclick = async () => {
   const title = document.getElementById("nTitle").value.trim(), text = document.getElementById("nText").value.trim();
   if(!title && !text && !nRec.blob) return;
   const n = {id:Date.now()+"-"+Math.random().toString(36).slice(2,6), date:TODAY, created:Date.now(), title, text, audio:nRec.blob||null};
-  S.notes.push(n); put("notes",n);
+  if(!await put("notes",n)) return; S.notes.push(n);
   document.getElementById("nTitle").value = ""; document.getElementById("nText").value = ""; nRec.show(null); setNMode("text");
   toast(); renderJournal();
 };
@@ -871,9 +885,9 @@ function renderTasks(){
     list.forEach(tk=>{
       const row = document.createElement("div"); row.className = "check task" + (tk.done?" on":"");
       row.innerHTML = `<span class="box">${tk.done?"✓":""}</span><span class="lbl">${esc(tk.title)}</span><button class="del" aria-label="Delete">✕</button>`;
-      row.onclick = e => {
-        if(e.target.classList.contains("del")){ S.tasks = S.tasks.filter(x=>x.id!==tk.id); del("tasks",tk.id); }
-        else { tk.done = !tk.done; tk.doneDate = tk.done ? TODAY : null; put("tasks",tk); toast(); }
+      row.onclick = async e => {
+        if(e.target.classList.contains("del")){ if(!await del("tasks",tk.id)) return; S.tasks = S.tasks.filter(x=>x.id!==tk.id); }
+        else { const next={...tk,done:!tk.done,doneDate:!tk.done ? TODAY : null}; if(!await put("tasks",next)) return; Object.assign(tk,next); toast(); }
         renderTasks(); renderSummary();
       };
       box.appendChild(row);
@@ -881,12 +895,12 @@ function renderTasks(){
     document.getElementById(countId).textContent = `${list.filter(x=>x.done).length}/${list.length}`;
   });
 }
-document.querySelectorAll("form.addrow").forEach(f=>f.onsubmit = e => {
+document.querySelectorAll("form.addrow").forEach(f=>f.onsubmit = async e => {
   e.preventDefault();
   const inp = f.querySelector("input"), title = inp.value.trim(); if(!title) return;
   const kind = f.dataset.kind;
   const tk = {id:Date.now()+"-"+Math.random().toString(36).slice(2,6), title, kind, period:kind==="daily"?TODAY:WEEK, done:false, doneDate:null, created:Date.now()};
-  S.tasks.push(tk); put("tasks",tk); inp.value = ""; renderTasks(); renderSummary(); toast();
+  if(!await put("tasks",tk)) return; S.tasks.push(tk); inp.value = ""; renderTasks(); renderSummary(); toast();
 });
 function rollTasks(){
   S.tasks.forEach(tk=>{
@@ -972,10 +986,10 @@ function renderJournal(){
         ${n.title ? `<b style="display:block;margin-bottom:4px">${esc(n.title)}</b>` : ""}${n.text ? `<div class="ntxt">${esc(n.text)}</div>` : ""}`;
       if(n.audio){ const a = document.createElement("audio"); a.controls = true; a.src = URL.createObjectURL(n.audio); c.appendChild(a); }
       const db_ = c.querySelector(".del");
-      db_.onclick = () => {
+      db_.onclick = async () => {
         if(!db_.classList.contains("armed")){ db_.classList.add("armed"); db_.textContent = t("deleteQ");
           setTimeout(()=>{ db_.classList.remove("armed"); db_.textContent = t("del"); }, 3000); return; }
-        S.notes = S.notes.filter(x=>x.id!==n.id); del("notes",n.id); renderJournal();
+        if(!await del("notes",n.id)) return; S.notes = S.notes.filter(x=>x.id!==n.id); renderJournal();
       };
     } else {
       const e = it.d;
@@ -984,7 +998,7 @@ function renderJournal(){
         const [text,opts] = q[lang]; return `<div class="qa"><span>${esc(text)}</span> <b>${esc(opts[i]||"")}</b></div>`;
       }).join("");
       c.innerHTML = `<div class="top"><b>${t("checkinTag")} · ${dfmt(e.date)}</b><span class="m">${MOODS[e.mood]||""}</span></div>
-        ${qa}
+        ${e.need && needIds.includes(e.need) ? `<div class="qa"><span>${g("savedNeed")}</span> <b>${esc(g("needs")[needIds.indexOf(e.need)])}</b></div>` : ""}${qa}
         ${(e.good&&e.good.length) ? `<div class="sec">${t("goodThings")}</div><ul>${e.good.map(g=>`<li>${esc(g)}</li>`).join("")}</ul>` : ""}
         ${(e.text||e.audio) ? `<div class="sec learned">${t("learned")}</div>` : ""}${e.text ? `<div class="ntxt">${esc(e.text)}</div>` : ""}
         ${e.challenge ? `<div class="sec">${t("challengeTag")}</div>` : ""}`;
@@ -996,6 +1010,9 @@ function renderJournal(){
   });
 }
 
+</script>
+<script src="gentle.js"></script>
+<script>
 /* ================= start ================= */
 (async()=>{
   db = await openDB();
@@ -1004,10 +1021,11 @@ function renderJournal(){
     S.tasks = await getAll("tasks");
     S.notes = await getAll("notes");
   }
-  rollTasks();
+  await rollTasks();
   applyLang();
-  const d = S.days[TODAY]; if(d && d.checkin) loadCheckin(d);
-})();
+  const d = S.days[TODAY]; if(d && d.checkin) loadCheckin(d); await restoreDraft();
+  if(!db) storageProblem();
+})().catch(()=>storageProblem());
 </script>
 </body>
 </html>
