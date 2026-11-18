@@ -91,11 +91,11 @@ function renderTries(){
   const row = mk('div','trow');
   const label = mk('label','check'); const cb = mk('input'); cb.type = 'checkbox'; cb.checked = it.done;
   const span = mk('span',null,it.title); label.append(cb, span);
-  const del = mk('button','link',t('del')); del.type = 'button';
-  del.onclick = async () => { if(await window.del('tries',it.id)){ S.tries = S.tries.filter(x=>x.id!==it.id); renderTries(); } };
+  const delBtn = mk('button','link',t('del')); delBtn.type = 'button';
+  delBtn.onclick = async () => { if(await del('tries',it.id)){ S.tries = S.tries.filter(x=>x.id!==it.id); renderTries(); } };
   cb.onchange = async () => { const next = {...it, done:cb.checked, feel:cb.checked?it.feel:null, doneDate:cb.checked?TODAY:null};
    if(await put('tries',next)){ Object.assign(it,next); toast(); renderTries(); } else cb.checked = it.done; };
-  row.append(label, del);
+  row.append(label, delBtn);
   if(it.done){
    const f = mk('div','tfeel'); f.append(mk('small',null,x_('howFelt')));
    const chips = mk('div','chips');

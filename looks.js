@@ -89,13 +89,13 @@ function viewLook(look){
   const row = mk('div','lbtns');
   const fav = mk('button','calm', look.fav ? lk('faved') : lk('fav')); fav.type = 'button';
   fav.onclick = async () => { const next = {...look, fav:!look.fav}; if(await put('looks', next)){ Object.assign(look,next); fav.textContent = look.fav ? lk('faved') : lk('fav'); renderGallery(); } };
-  const del = mk('button','link danger', lk('del')); del.type = 'button';
-  del.onclick = async () => {
-   if(!del.classList.contains('armed')){ del.classList.add('armed'); del.textContent = lk('delQ'); setTimeout(()=>{ del.classList.remove('armed'); del.textContent = lk('del'); }, 3000); return; }
-   if(await window.del('looks', look.id)){ S.looks = S.looks.filter(x=>x.id!==look.id); if(urls.has(look.id)){ URL.revokeObjectURL(urls.get(look.id)); urls.delete(look.id); } closeSheet(); renderLookRow(); renderGallery(); }
+  const delBtn = mk('button','link danger', lk('del')); delBtn.type = 'button';
+  delBtn.onclick = async () => {
+   if(!delBtn.classList.contains('armed')){ delBtn.classList.add('armed'); delBtn.textContent = lk('delQ'); setTimeout(()=>{ delBtn.classList.remove('armed'); delBtn.textContent = lk('del'); }, 3000); return; }
+   if(await del('looks', look.id)){ S.looks = S.looks.filter(x=>x.id!==look.id); if(urls.has(look.id)){ URL.revokeObjectURL(urls.get(look.id)); urls.delete(look.id); } closeSheet(); renderLookRow(); renderGallery(); }
   };
   const close = mk('button','btn', lk('close')); close.type = 'button'; close.onclick = closeSheet;
-  row.append(fav, close); box.append(row, del); close.focus();
+  row.append(fav, close); box.append(row, delBtn); close.focus();
  });
 }
 
