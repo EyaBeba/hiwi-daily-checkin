@@ -114,7 +114,7 @@ function renderTries(){
 const tasksBase = renderTasks;
 renderTasks = function(){
  tasksBase();
- if(S.tries===null){ if(db){ S.tries = []; getAll('tries').then(r=>{ S.tries = r; renderTries(); }); } else S.tries = []; }
+ if(S.tries===null){ if(db){ S.tries = []; getAll('tries').then(r=>{ S.tries = r; renderTries(); }).catch(()=>{}); } else S.tries = []; }
  renderTries();
 };
 

@@ -78,3 +78,4 @@ html.locked .wrap{visibility:hidden}
 .pkeys{display:grid;grid-template-columns:repeat(3,72px);gap:12px}.pkeys button{height:72px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:24px;cursor:pointer}
 .pkeys .pblank{visibility:hidden}.pbox .calm,.pbox .btn{width:100%;min-height:48px}
 .pinset h3{margin-top:18px}
+.wmark,.arrival-mark{pointer-events:none}.wlang{z-index:1}

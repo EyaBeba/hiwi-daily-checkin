@@ -32,7 +32,12 @@ renderProgress = function(){ lbBase(); const r = document.querySelector('#progre
 
 /* ---------- photo helpers ---------- */
 S.looks = null;
-async function loadLooks(){ if(S.looks!==null) return; S.looks = db ? await getAll('looks') : []; }
+let looksLoading = null;
+function loadLooks(){
+ if(S.looks!==null) return Promise.resolve();
+ if(!db) return Promise.resolve();   // storage not open yet: try again on the next render
+ return looksLoading || (looksLoading = getAll('looks').then(r=>{ S.looks = r; }).catch(()=>{ S.looks = []; }));
+}
 function shrink(file){
  return new Promise((resolve,reject)=>{
   const url = URL.createObjectURL(file), img = new Image();
@@ -73,7 +78,7 @@ picker.onchange = async () => {
   save.onclick = async () => {
    save.disabled = true;
    const look = {id:Date.now()+'-'+Math.random().toString(36).slice(2,6), date:VIEW, created:Date.now(), photo:blob, vibe, line:line.value.trim(), fav:false};
-   if(await put('looks', look)){ S.looks.push(look); URL.revokeObjectURL(prev); closeSheet(); toast(); renderLookRow(); renderGallery(); }
+   if(await put('looks', look)){ (S.looks = S.looks || []).push(look); URL.revokeObjectURL(prev); closeSheet(); toast(); renderLookRow(); renderGallery(); }
    else { save.disabled = false; toast(lk('photoFail')); }
   };
   row.append(cancel, save); box.append(img, chips, line, row);
@@ -123,7 +128,7 @@ async function renderGallery(){
  await loadLooks();
  gallery.replaceChildren();
  const head = mk('div','ghead'); head.append(mk('h2',null,lk('title')));
- const list = [...S.looks].sort((a,b)=>b.date.localeCompare(a.date)||b.created-a.created);
+ const list = [...(S.looks||[])].sort((a,b)=>b.date.localeCompare(a.date)||b.created-a.created);
  if(list.some(l=>l.fav)){ const f = mk('button','link', favFilter ? lk('all') : lk('favOnly')); f.type = 'button'; f.onclick = () => { favFilter = !favFilter; renderGallery(); }; head.append(f); }
  gallery.append(head);
  const shown = favFilter ? list.filter(l=>l.fav) : list;
