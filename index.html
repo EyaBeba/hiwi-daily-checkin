@@ -628,37 +628,109 @@ document.getElementById("themeBtn").onclick = () => { theme = theme==="dark" ? "
 const canRecord = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
 function pickType(){ for(const ty of ["audio/webm;codecs=opus","audio/webm","audio/mp4","audio/aac"]){ try{ if(MediaRecorder.isTypeSupported(ty)) return ty; }catch(e){} } return ""; }
 const fmt = s => `${Math.floor(s/60)}:${pad(s%60)}`;
+const MAX_REC = 600; // 10 minutes
+// MediaRecorder files often have no length info, so players cut off or can't seek. Ask the player to measure it.
+document.addEventListener("loadedmetadata", e=>{
+  const a = e.target;
+  if(a && a.tagName==="AUDIO" && a.duration===Infinity){
+    a.currentTime = 1e101;
+    a.addEventListener("timeupdate", function fix(){ a.removeEventListener("timeupdate", fix); a.currentTime = 0; });
+  }
+}, true);
 function makeRecorder(p){
   const $ = id => document.getElementById(p+id);
   const btn = $("RecBtn") || $("recBtn"), status = $("RecStatus") || $("recStatus");
+  const wrap = $("RecWrap") || $("recWrap"), audioEl = $("Audio") || $("audio");
   const R = {blob:null, rec:null, url:null};
-  let chunks = [], timer = null, secs = 0, stream = null;
+  let chunks = [], timer = null, secs = 0, stream = null, wake = null, note = "", lostMsg = "";
+  const tr = (en,am) => lang==="am" ? am : en;
+  const extra = document.createElement("button"); extra.type = "button"; extra.className = "link hidden";
+  const sel = document.createElement("select"); sel.className = "micsel hidden";
+  const tip = document.createElement("p"); tip.className = "mictip hidden";
+  wrap.append(extra, sel, tip);
   if(!canRecord){ btn.disabled = true; btn.style.opacity = .4; }
-  R.idleText = () => { if(!R.rec || R.rec.state!=="recording") status.textContent = canRecord ? t("tapRec") : t("noVoice"); };
+  const state = () => R.rec ? R.rec.state : "inactive";
+  function ui(){
+    const s = state();
+    btn.classList.toggle("live", s==="recording");
+    btn.textContent = s==="recording" ? "■" : s==="paused" ? "▶" : "🎙️";
+    if(s==="recording") status.textContent = `${t("recording")} ${fmt(secs)} · ${t("tapStop")}`;
+    else if(s==="paused") status.textContent = (note ? note+" " : "") + `${tr("Paused","ቆሟል")} ${fmt(secs)} · ${tr("tap ▶ to continue","ለመቀጠል ▶ ተጫኚ")}`;
+    else status.textContent = canRecord ? t("tapRec") : t("noVoice");
+    extra.classList.toggle("hidden", s==="inactive");
+    extra.textContent = s==="recording" ? tr("Pause","ለአፍታ አቁሚ") : tr("Finish and keep recording","ጨርሺና አስቀምጪ");
+    tip.textContent = tr("Wireless earphone mics often sound less clear. For the clearest voice, hold the phone close and use its own mic.",
+      "የገመድ አልባ የጆሮ ማዳመጫ ማይክሮፎን ብዙ ጊዜ ግልጽ አይደለም። ለጥሩ ድምፅ ስልኩን አቅርበሽ የስልኩን ማይክሮፎን ተጠቀሚ።");
+    if(sel.options[0]) sel.options[0].textContent = tr("Microphone: automatic","ማይክሮፎን፦ ራስ-ሰር");
+  }
+  R.idleText = ui;
   R.show = blob => {
     R.blob = blob;
-    if(R.url) URL.revokeObjectURL(R.url); R.url=blob?URL.createObjectURL(blob):null; if(R.url) ($("Audio")||$("audio")).src = R.url; else ($("Audio")||$("audio")).removeAttribute("src");
+    if(R.url) URL.revokeObjectURL(R.url); R.url = blob ? URL.createObjectURL(blob) : null;
+    if(R.url) audioEl.src = R.url; else audioEl.removeAttribute("src");
     ($("Playback")||$("playback")).classList.toggle("hidden", !blob);
-    ($("RecWrap")||$("recWrap")).classList.toggle("hidden", !!blob);
+    wrap.classList.toggle("hidden", !!blob);
   };
-  async function start(){
-    try{ stream = await navigator.mediaDevices.getUserMedia({audio:true}); }
-    catch(e){ status.textContent = t("noMic"); return; }
-    const ty = pickType();
-    R.rec = ty ? new MediaRecorder(stream,{mimeType:ty}) : new MediaRecorder(stream);
-    chunks = [];
-    R.rec.ondataavailable = e => { if(e.data.size) chunks.push(e.data); };
-    R.rec.onstop = () => {
-      stream.getTracks().forEach(x=>x.stop()); clearInterval(timer);
-      btn.classList.remove("live"); btn.textContent = "🎙️"; status.textContent = t("tapRec");
-      R.show(new Blob(chunks,{type:R.rec.mimeType || ty || "audio/webm"})); if(!p) persistDraft();
-    };
-    R.rec.start(); secs = 0;
-    btn.classList.add("live"); btn.textContent = "■";
-    status.textContent = `${t("recording")} 0:00 · ${t("tapStop")}`;
-    timer = setInterval(()=>{ secs++; status.textContent = `${t("recording")} ${fmt(secs)} · ${t("tapStop")}`; if(secs>=180) R.rec.stop(); },1000);
+  async function listMics(){
+    try{
+      const ds = (await navigator.mediaDevices.enumerateDevices())
+        .filter(d=>d.kind==="audioinput" && d.label && !["default","communications"].includes(d.deviceId));
+      if(ds.length<2){ sel.classList.add("hidden"); return; }
+      sel.replaceChildren(new Option("", ""), ...ds.map(d=>new Option(d.label, d.deviceId)));
+      sel.value = ds.some(d=>d.deviceId===lsGet("mic-id")) ? lsGet("mic-id") : "";
+      sel.classList.remove("hidden"); ui();
+    }catch(e){}
   }
-  btn.onclick = () => { if(R.rec && R.rec.state==="recording") R.rec.stop(); else start(); };
+  sel.onchange = () => lsSet("mic-id", sel.value);
+  if(canRecord){ listMics(); try{ navigator.mediaDevices.addEventListener("devicechange", listMics); }catch(e){} }
+  const lock = async () => { try{ wake = await navigator.wakeLock.request("screen"); }catch(e){ wake = null; } };
+  const unlock = () => { try{ wake && wake.release(); }catch(e){} wake = null; };
+  const tick = () => { clearInterval(timer); timer = setInterval(()=>{ secs++; ui(); if(secs>=MAX_REC) R.rec.stop(); },1000); };
+  function pause(msg){
+    if(state()!=="recording") return;
+    try{ R.rec.requestData(); }catch(e){}
+    R.rec.pause(); clearInterval(timer); unlock(); note = msg || ""; ui();
+  }
+  function resume(){
+    const track = stream && stream.getAudioTracks()[0];
+    if(!track || track.readyState!=="live"){ lostMsg = tr("The microphone was taken away, so your recording was kept up to that point.","ማይክሮፎኑ ስለተወሰደ እስከዚያ ድረስ የተቀዳው ተቀምጧል።"); R.rec.stop(); return; }
+    R.rec.resume(); note = ""; tick(); lock(); ui();
+  }
+  async function start(){
+    const audio = {echoCancellation:true, noiseSuppression:true, autoGainControl:true, channelCount:{ideal:1}, sampleRate:{ideal:48000}};
+    const chosen = lsGet("mic-id"); if(chosen) audio.deviceId = {exact:chosen};
+    try{ stream = await navigator.mediaDevices.getUserMedia({audio}); }
+    catch(e){
+      if(chosen){ lsSet("mic-id",""); delete audio.deviceId;
+        try{ stream = await navigator.mediaDevices.getUserMedia({audio}); }catch(e2){ status.textContent = t("noMic"); return; } }
+      else { status.textContent = t("noMic"); return; }
+    }
+    listMics();
+    const track = stream.getAudioTracks()[0];
+    tip.classList.toggle("hidden", !/bluetooth|airpods|buds|headset|hands.?free|headphone|earphone/i.test(track.label||""));
+    // A phone call (or another app) can mute or take the mic: pause, or keep what was recorded.
+    track.onmute = () => pause(tr("A call or another app used the microphone.","ጥሪ ወይም ሌላ መተግበሪያ ማይክሮፎኑን ተጠቀመ።"));
+    track.onended = () => { if(state()!=="inactive"){ lostMsg = tr("The microphone was taken away, so your recording was kept up to that point.","ማይክሮፎኑ ስለተወሰደ እስከዚያ ድረስ የተቀዳው ተቀምጧል።"); R.rec.stop(); } };
+    const ty = pickType();
+    try{ R.rec = new MediaRecorder(stream, Object.assign({audioBitsPerSecond:96000}, ty ? {mimeType:ty} : {})); }
+    catch(e){ R.rec = ty ? new MediaRecorder(stream,{mimeType:ty}) : new MediaRecorder(stream); }
+    chunks = [];
+    R.rec.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
+    R.rec.onstop = () => {
+      clearInterval(timer); unlock(); stream.getTracks().forEach(x=>x.stop()); note = "";
+      const blob = new Blob(chunks,{type:(R.rec && R.rec.mimeType) || ty || "audio/webm"});
+      ui(); R.show(blob.size ? blob : null);
+      if(!p && typeof persistDraft==="function") persistDraft();
+      if(lostMsg){ toast(lostMsg); lostMsg = ""; }
+    };
+    R.rec.start(1000);   // save a piece every second so an interruption never loses everything
+    secs = 0; note = ""; tick(); lock(); ui();
+  }
+  document.addEventListener("visibilitychange", () => {
+    if(document.hidden) pause(tr("You left the page.","ከገጹ ወጥተሽ ነበር።"));
+  });
+  btn.onclick = () => { const s = state(); if(s==="recording") R.rec.stop(); else if(s==="paused") resume(); else start(); };
+  extra.onclick = () => { const s = state(); if(s==="recording") pause(""); else if(s==="paused") R.rec.stop(); };
   ($("DelAudio")||$("delAudio")).onclick = () => R.show(null);
   return R;
 }

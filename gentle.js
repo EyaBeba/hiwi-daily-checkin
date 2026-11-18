@@ -147,11 +147,11 @@ form.addEventListener('input',()=>{clearTimeout(draftTimer);draftTimer=setTimeou
 form.addEventListener('click',()=>{clearTimeout(draftTimer);draftTimer=setTimeout(persistDraft,100);});
 window.addEventListener('pagehide',persistDraft);
 const originalSetView=setView;
-setView=async function(k){if([ciRec,nRec].some(r=>r.rec?.state==='recording')){toast(g('voiceBusy'));return;}await persistDraft();[1,2,3,4].forEach(n=>$g('worry'+n).value='');$g('draftStatus').textContent='';originalSetView(k);};
+setView=async function(k){if([ciRec,nRec].some(r=>(r.rec&&r.rec.state!=='inactive'))){toast(g('voiceBusy'));return;}await persistDraft();[1,2,3,4].forEach(n=>$g('worry'+n).value='');$g('draftStatus').textContent='';originalSetView(k);};
 const originalSave=$g('save').onclick;
-$g('save').onclick=async()=>{if(ciRec.rec?.state==='recording'){toast(g('voiceBusy'));return;}await refreshDay();if(!ci.mood)return;$g('save').disabled=true;try{await originalSave();}finally{$g('save').disabled=!ci.mood;}};
+$g('save').onclick=async()=>{if((ciRec.rec&&ciRec.rec.state!=='inactive')){toast(g('voiceBusy'));return;}await refreshDay();if(!ci.mood)return;$g('save').disabled=true;try{await originalSave();}finally{$g('save').disabled=!ci.mood;}};
 const originalNoteSave=$g('nSave').onclick;
-$g('nSave').onclick=async()=>{if(nRec.rec?.state==='recording'){toast(g('voiceBusy'));return;}$g('nSave').disabled=true;try{await originalNoteSave();}finally{$g('nSave').disabled=false;}};
+$g('nSave').onclick=async()=>{if((nRec.rec&&nRec.rec.state!=='inactive')){toast(g('voiceBusy'));return;}$g('nSave').disabled=true;try{await originalNoteSave();}finally{$g('nSave').disabled=false;}};
 
 // Upgrade only by adding a store; all original entries and voice recordings survive.
 openDB=function(){return new Promise(resolve=>{try{const request=indexedDB.open('my-day',3);request.onupgradeneeded=()=>{const database=request.result;for(const [name,key] of [['days','date'],['tasks','id'],['notes','id'],['drafts','date']])if(!database.objectStoreNames.contains(name))database.createObjectStore(name,{keyPath:key});};request.onsuccess=()=>{request.result.onversionchange=()=>request.result.close();resolve(request.result);};request.onerror=()=>resolve(null);request.onblocked=()=>{storageProblem();resolve(null);};}catch{resolve(null);}});};
@@ -159,7 +159,7 @@ openDB=function(){return new Promise(resolve=>{try{const request=indexedDB.open(
 // Refresh calendar state when a phone returns to the app, including after midnight.
 async function refreshDay(){
  const fresh=new Date(),key=keyOf(fresh); if(key===TODAY)return;
- if([ciRec,nRec].some(r=>r.rec?.state==='recording'))return;
+ if([ciRec,nRec].some(r=>(r.rec&&r.rec.state!=='inactive')))return;
  await persistDraft();const wasToday=VIEW===TODAY;now=fresh;TODAY=key;const monday=new Date(now);monday.setDate(monday.getDate()-((monday.getDay()+6)%7));WEEK=keyOf(monday);
  if(wasToday){VIEW=TODAY;resetForm();[1,2,3,4].forEach(n=>$g('worry'+n).value='');if(S.days[TODAY]?.checkin)loadCheckin(S.days[TODAY]);else await restoreDraft();}
  applyLang();
