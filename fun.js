@@ -205,7 +205,8 @@ function aboutCard(){
  const card = mk('div','card about'); card.append(mk('h2',null,'All about me 💗'));
  const answers = {};
  Object.values(S.days).filter(d=>d.tot).sort((a,b)=>a.date.localeCompare(b.date)).forEach(d=>{ answers[d.tot.q] = d.tot.a; });
- const picks = Object.entries(answers).map(([q,a])=>THIS_OR_THAT[q] && THIS_OR_THAT[q][a]).filter(Boolean);
+ const plain = t => t.replace(/^\S+\s/,'').toLowerCase();
+ const picks = Object.entries(answers).map(([q,a])=>THIS_OR_THAT[q] ? `${THIS_OR_THAT[q][a]} over ${plain(THIS_OR_THAT[q][1-a])}` : null).filter(Boolean);
  if(!picks.length){ card.append(mk('p','hint','Answer the daily "this or that" on Today, and your answers collect here.')); return card; }
  card.append(mk('p','hint',`${picks.length} little things about you, chosen by you.`));
  const chips = mk('div','aboutchips'); picks.forEach(p=>chips.append(mk('span',null,p))); card.append(chips);

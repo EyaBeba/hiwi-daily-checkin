@@ -10,7 +10,7 @@ if(!lsGet('gentle-routines')){
 /* ---------- her answers ---------- */
 const QUIZ = [
  {key:'colour', q:'Pick your colour 🎨', opts:['💗 Pink','💜 Purple','🍑 Peach','🌿 Green']},
- {key:'music', q:'What music do you love? 🎵', opts:['🎤 English songs','🇪🇹 Ethiopian songs','💫 Both']},
+ {key:'music', q:'What music do you love? 🎵', opts:['🎤 English songs','🇪🇹 Ethiopian songs','💫 Both English & Ethiopian']},
  {key:'unwind', q:'After a long shift, what helps you most? 🌙', opts:['🍵 A warm cup of Karak chai','🎧 Music','📞 Talking to someone','😴 Just sleep']}
 ];
 const COLOUR_THEME = ['rose','lavender','peach','sage'];
@@ -69,14 +69,10 @@ const BIG_DARES = [
 const SONGS = {
  en:[['Here Comes the Sun · The Beatles'],['Lovely Day · Bill Withers'],['Unwritten · Natasha Bedingfield'],['Rise Up · Andra Day'],['Count on Me · Bruno Mars'],['Golden Hour · JVKE'],['Three Little Birds · Bob Marley']],
  et:[ // her favourite artists; the link searches the artist so she picks the song
-  ['Put on your favourite Veronica Adane song 🎶','Veronica Adane'],
-  ['A Teddy Afro song you have not heard in a while 🎶','Teddy Afro'],
-  ['Start the day with Abinet Agonafer 🎶','Abinet Agonafer'],
-  ['Tamrat Desta for your mood today 🎶','Tamrat Desta'],
-  ['Sing along to Veronica Adane today 🎶','Veronica Adane'],
-  ['Your Teddy Afro favourite, on repeat 🎶','Teddy Afro'],
-  ['Something soft from Abinet Agonafer 🎶','Abinet Agonafer'],
-  ['Your favourite Tamrat Desta song, full volume 🎶','Tamrat Desta']
+  ['Listen to Veronica Adane today 🎶','Veronica Adane'],
+  ['Listen to Teddy Afro today 🎶','Teddy Afro'],
+  ['Listen to Abinet Agonafer today 🎶','Abinet Agonafer'],
+  ['Listen to Tamrat Desta today 🎶','Tamrat Desta']
  ]
 };
 const surpriseBase = pickSurprise;
@@ -84,8 +80,8 @@ pickSurprise = function(k){
  const sp = surpriseBase(k), n = dayIdx(k);
  if(sp[1]==='Tiny dare' && isOff(k)) return ['🌸','Day-off dare', BIG_DARES[n % BIG_DARES.length]];
  if(sp[1]==='Song for today'){
-  const m = answers().music, list = m===0 ? SONGS.en : m===1 ? SONGS.et : (n%2 ? SONGS.et : SONGS.en);
-  const song = list[Math.floor(n/4) % list.length]; return ['🎵','Song for today', song[0], song[1]];
+  const m = answers().music, list = m===0 ? SONGS.en : m===1 ? SONGS.et : (Math.floor(n/4)%2 ? SONGS.et : SONGS.en);
+  const song = list[Math.floor(n/8) % list.length]; return ['🎵','Song for today', song[0], song[1]];
  }
  return sp;
 };
@@ -133,8 +129,12 @@ offChip.onclick = async () => { const d = day(TODAY); d.off = !d.off; await save
 const aboutBase = aboutCard;
 aboutCard = function(){
  const card = aboutBase(), a = answers();
- const mine = QUIZ.map(q=>a[q.key]!=null ? q.opts[a[q.key]] : null).filter(Boolean)
-  .map(t=>t==='🍵 A warm cup of Karak chai' ? '🍵 Karak chai after work' : t);
+ const ABOUT = {
+  colour:['💗 Favourite colour: pink','💜 Favourite colour: purple','🍑 Favourite colour: peach','🌿 Favourite colour: green'],
+  music:['🎤 Loves English songs','🇪🇹 Loves Ethiopian music','🎶 Loves both English & Ethiopian music'],
+  unwind:['🍵 Unwinds with Karak chai after work','🎧 Unwinds with music after work','📞 Unwinds by talking to someone','😴 Unwinds with a good sleep']
+ };
+ const mine = QUIZ.map(q=>a[q.key]!=null ? ABOUT[q.key][a[q.key]] : null).filter(Boolean);
  if(!mine.length) return card;
  let chips = card.querySelector('.aboutchips');
  if(!chips){ card.querySelector('.hint')?.remove(); chips = mk('div','aboutchips'); card.append(chips); }
