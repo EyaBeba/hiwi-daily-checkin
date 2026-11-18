@@ -62,7 +62,7 @@ function calendarCard(st){
  const detail = mk('p','mdetail');
  st.keys.forEach(k=>{
   const d = S.days[k], has = d && d.checkin && d.mood;
-  const b = mk('button','mdot'+(k===TODAY?' today':''));
+  const b = mk('button','mdot'+(k===TODAY?' today':'')); b.dataset.date = k;
   b.type = 'button';
   if(has) b.style.background = MOOD_COLORS[Number(d.mood)-1];
   const dateTxt = fromKey(k).toLocaleDateString(LOC(),{weekday:'short',day:'numeric',month:'short'});
