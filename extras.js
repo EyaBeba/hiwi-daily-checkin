@@ -4,7 +4,7 @@ const X = {
   wTitle:'Hi Hiwiyeye 🌸', wIntro:'This is your little room, a quiet place to check in with yourself.',
   wPoints:['💗 One tap is enough. Pick how you feel, save, done.',
            '🔒 Only you can see it. Everything stays on this phone.',
-           '📲 Add it to your home screen so it opens like an app and stays safe. iPhone: Share → Add to Home Screen. Android: ⋮ menu → Add to Home screen.',
+           '📲 First, add it to your home screen so it opens like an app and your entries stay safe in one place. iPhone: Share → Add to Home Screen. Android: ⋮ menu → Add to Home screen.',
            '💾 Once in a while, save a backup from ⚙️ so nothing gets lost.'],
   wBtn:"Let's begin", wAgain:'How this works',
   triesTitle:'Things I want to try ✨', triesHint:'Little experiments to find what you love. No pressure.',

@@ -4,7 +4,7 @@
 [data-theme=dark]{--bg:#211e25;--card:#2c2831;--field:#26222b;--ink:#f3ecef;--soft:#c3b6c1;--line:#49404c;--rose:#d8afd0;--rose-soft:#453344;--lav:#c8b8dc;--lav-soft:#3b3248;--sky:#adcbd2;--sky-soft:#2b4046;--track:#423845}
 body{padding:24px 18px 44px;background:radial-gradient(ellipse at 90% 0%,var(--rose-soft),transparent 40%),var(--bg)}
 .wrap{max-width:520px}header{align-items:center;margin:0 0 22px}header h1{font-family:var(--sans);font-size:17px;margin-top:3px}header .date{font-size:12px}.hbtns button{min-width:44px;min-height:44px;background:transparent;border-color:var(--line)}
-.tabs{border-radius:16px;top:8px;padding:5px;box-shadow:0 5px 20px #30202b08;margin-bottom:22px;backdrop-filter:blur(12px)}.tabs button{border-radius:11px;min-height:44px;font-size:12px;padding:9px 5px}.tabs button.on,.btn,.pill.on{background:var(--rose);color:var(--card)}
+.tabs{border-radius:16px;top:8px;padding:5px;box-shadow:0 5px 20px #30202b08;margin-bottom:22px;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}.tabs button{border-radius:11px;min-height:44px;font-size:12px;padding:9px 5px}.tabs button.on,.btn,.pill.on{background:var(--rose);color:var(--card)}
 [data-theme=dark] .tabs button.on,[data-theme=dark] .btn,[data-theme=dark] .pill.on{color:#281f2b}
 .daynav{margin-bottom:24px}.daynav b{font-size:13px}.daynav span{font-size:11px}.daynav button{background:transparent;min-width:44px;min-height:44px}
 .arrival{padding:4px 14px 28px;position:relative}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.16em;font-weight:700;color:var(--rose);margin-bottom:12px}.arrival h2{font-size:39px;font-weight:500;letter-spacing:-1.2px;line-height:1.15;margin-bottom:12px;max-width:360px}.arrival>p:last-child{font-size:14px;color:var(--soft);max-width:320px;line-height:1.7}.arrival-mark{position:absolute;right:10px;top:12px;font-size:42px;color:var(--rose);opacity:.6}
@@ -115,6 +115,7 @@ body[data-tod=night]{background:radial-gradient(ellipse at 85% 0%,#d9d3f0,transp
 .lbanner[hidden]{display:none!important}.lbicon{font-size:28px;animation:wiggle 2.4s ease-in-out infinite}
 .future textarea{min-height:110px;margin-bottom:10px}.future .chips{margin-bottom:12px}.sealed{margin-top:14px;display:grid;gap:6px}.sealed p{font-size:13px;color:var(--soft)}
 /* garden + about */
+.bed{background:linear-gradient(180deg,transparent 55%,#e6cfc0 100%),var(--rose-soft)}
 .bed{display:flex;flex-wrap:wrap;gap:4px 6px;padding:18px 12px 14px;border-radius:16px;background:linear-gradient(180deg,transparent 55%,color-mix(in srgb,var(--rose-soft) 70%,#c8a98a 30%) 100%),var(--rose-soft);min-height:84px;align-items:flex-end}
 .flower{font-size:26px;display:inline-block;transform-origin:bottom center;animation:sway 4s ease-in-out infinite}
 @keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
