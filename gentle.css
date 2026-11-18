@@ -79,3 +79,4 @@ html.locked .wrap{visibility:hidden}
 .pkeys .pblank{visibility:hidden}.pbox .calm,.pbox .btn{width:100%;min-height:48px}
 .pinset h3{margin-top:18px}
 .wmark,.arrival-mark{pointer-events:none}.wlang{z-index:1}
+#langBtn,.wlang{display:none!important}
