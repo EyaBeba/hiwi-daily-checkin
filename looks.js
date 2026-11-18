@@ -240,3 +240,11 @@ function renderPinSetting(){
  const vb = renderView; renderView = function(){ vb(); renderLookRow(); };
  label();
 })();
+
+/* Her name in Amharic script when the page is in Amharic. */
+const greetBase = setGreeting;
+setGreeting = function(){
+ greetBase();
+ if(lang==='am'){ const h = document.getElementById('greet'); h.textContent = h.textContent.replace(/Hiwiyeye|Hiwiye|Hiwi/g, m => m==='Hiwiyeye' ? 'ሒዊይዬ' : 'ሒዊዬ'); }
+};
+setGreeting();
