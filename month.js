@@ -151,6 +151,7 @@ renderProgress = function(){
  panel.addEventListener('keydown', e => { if(e.key==='Escape') shut(); });
  const label = () => { const am = lang==='am';
   title.textContent = am ? 'ማስተካከያ' : 'Settings';
-  btn.setAttribute('aria-label', am ? 'ማስተካከያ' : 'Settings'); close.setAttribute('aria-label', am ? 'ዝጊ' : 'Close'); };
+  btn.setAttribute('aria-label', am ? 'ማስተካከያ' : 'Settings');
+  const lb = document.getElementById('langBtn'); lb.textContent = '🌐'; lb.setAttribute('aria-label', am ? 'Switch to English' : 'ወደ አማርኛ ቀይሪ'); lb.title = am ? 'English' : 'አማርኛ'; close.setAttribute('aria-label', am ? 'ዝጊ' : 'Close'); };
  const baseLang = applyLang; applyLang = function(){ baseLang(); label(); }; label();
 })();
