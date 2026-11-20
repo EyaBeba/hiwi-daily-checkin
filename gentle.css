@@ -144,3 +144,4 @@ body[data-tod=off]{background:radial-gradient(ellipse at 85% 0%,#ffd9e4,transpar
 .qopts.multi{grid-template-columns:1fr 1fr}.qopts.multi button{font-size:15px;padding:0 14px}
 .qopts.multi button.on::after{content:" ✓";color:var(--rose)}
 .quiz .btn:disabled{opacity:.4}
+.offscreen{position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0}
